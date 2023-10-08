@@ -3,34 +3,41 @@ from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait, StopWatch
-from missions import mission_1, mission_2
+from missions import mission_1, mission_2, test_rotation
+from attachment_functions import reset_motors
 from hub_functions import countdown
 
 # Robot class
 class Robot:
-    def __init__(self, hub, left_motor, right_motor, left_sensor, right_sensor, drive_base):
+    def __init__(self, hub, left_motor, right_motor, left_attachment_motor, right_attachment_motor, left_sensor, right_sensor, drive_base):
         self.hub = hub
         self.left_motor = left_motor
         self.right_motor = right_motor
+        self.left_attachment_motor = left_attachment_motor
+        self.right_attachment_motor = right_attachment_motor
         self.left_sensor = left_sensor
         self.right_sensor = right_sensor
         self.drive_base = drive_base
 
 hub = InventorHub()
 
-# Initialise motors
-left_motor = Motor(Port.E, Direction.COUNTERCLOCKWISE)
-right_motor = Motor(Port.D)
+# Initialise drive motors
+left_motor = Motor(Port.C, Direction.COUNTERCLOCKWISE)
+right_motor = Motor(Port.E)
+
+# Initialise attachment motors
+left_attachment_motor = Motor(Port.D)
+right_attachment_motor = Motor(Port.F)
 
 # Initialise sensors
 left_sensor = ColorSensor(Port.A)
-right_sensor = ColorSensor(Port.C)
+right_sensor = ColorSensor(Port.B)
 
 # Initialise drive base
 drive_base = DriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
 
 # Initialise robot
-robot = Robot(hub, left_motor, right_motor, left_sensor, right_sensor, drive_base)
+robot = Robot(hub, left_motor, right_motor, left_attachment_motor, right_attachment_motor, left_sensor, right_sensor, drive_base)
 
 print(f"Robot {robot}")
 
@@ -40,6 +47,11 @@ print(f"Robot {robot}")
 # left_motor.control.limits(Lspeed, (Lacceleration, Lacceleration/2), Ltorqe)
 # right_motor.control.limits(Rspeed, (Racceleration, Racceleration/2), Rtorqe)
 
+Lspeed, Lacelretion, Ltorqe = left_attachment_motor.control.limits()
+left_motor.control.limits(Lspeed, Lacelretion, Ltorqe)
+Rspeed, Racelretion, Rtorqe = right_attachment_motor.control.limits()
+right_attachment_motor.control.limits(Rspeed, Racelretion, Rtorqe)
+
 # Menu index
 min_index = 0
 index = 0
@@ -47,6 +59,8 @@ max_index = 10
 
 # Prevent centre button from shutting down hub
 hub.system.set_stop_button(None)
+
+reset_motors(robot, 0)
 
 # Menu system
 while True:
@@ -75,7 +89,7 @@ while True:
     if Button.CENTER in hub.buttons.pressed() and index == 0:
         print(hub.buttons.pressed())
         wait(750)
-        mission_1(robot)
+        test_rotation(robot)
     elif Button.CENTER in hub.buttons.pressed() and index == 1:
         wait(750)
         mission_2(robot)

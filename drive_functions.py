@@ -18,6 +18,13 @@ def move_distance(robot, distance, speed=500, kp=10):
 
     hold(robot.left_motor, robot.right_motor)
 
+def move_backwards_distance(robot, distance, speed=500, kp=10):
+    robot.drive_base.reset()
+    while -robot.drive_base.distance() < distance:
+        drive_straight(robot, -speed, kp)
+
+    hold(robot.left_motor, robot.right_motor)
+
 def move_until_black_line(robot, speed=500, kp=10):
     robot.left_sensor.lights.off()
     robot.right_sensor.lights.off()
