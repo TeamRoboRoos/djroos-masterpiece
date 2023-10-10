@@ -3,7 +3,7 @@ from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait, StopWatch
-from missions import mission_1, mission_2, test_rotation
+from missions import run_1, run_2, run_3, run_4, mission_1, mission_2, test_rotation, reset_attachment_motors, rotate_both_motors
 from attachment_functions import reset_motors
 from hub_functions import countdown
 
@@ -47,14 +47,14 @@ print(f"Robot {robot}")
 # left_motor.control.limits(Lspeed, (Lacceleration, Lacceleration/2), Ltorqe)
 # right_motor.control.limits(Rspeed, (Racceleration, Racceleration/2), Rtorqe)
 
-Lspeed, Lacelretion, Ltorqe = left_attachment_motor.control.limits()
-left_motor.control.limits(Lspeed, Lacelretion, Ltorqe)
-Rspeed, Racelretion, Rtorqe = right_attachment_motor.control.limits()
-right_attachment_motor.control.limits(Rspeed, Racelretion, Rtorqe)
+# Lspeed, Lacelretion, Ltorqe = left_attachment_motor.control.limits()
+# left_motor.control.limits(Lspeed, Lacelretion, Ltorqe)
+# Rspeed, Racelretion, Rtorqe = right_attachment_motor.control.limits()
+# right_attachment_motor.control.limits(Rspeed, Racelretion, Rtorqe)
 
 # Menu index
-min_index = 0
-index = 0
+min_index = 1
+index = 1
 max_index = 10
 
 # Prevent centre button from shutting down hub
@@ -86,18 +86,20 @@ while True:
         hub.speaker.beep(700, 100)
     hub.display.number(index)
 
-    if Button.CENTER in hub.buttons.pressed() and index == 0:
+    if Button.CENTER in hub.buttons.pressed() and index == 1:
         print(hub.buttons.pressed())
         wait(750)
-        test_rotation(robot)
-    elif Button.CENTER in hub.buttons.pressed() and index == 1:
-        wait(750)
-        mission_2(robot)
+        run_1(robot)
+        #reset_attachment_motors(robot, 10)
     elif Button.CENTER in hub.buttons.pressed() and index == 2:
         wait(750)
-        mission_1(robot)
+        # run_2(robot)
+        run_2(robot)
     elif Button.CENTER in hub.buttons.pressed() and index == 3:
         wait(750)
-        mission_1(robot)
+        run_3(robot)
+    elif Button.CENTER in hub.buttons.pressed() and index == 4:
+        wait(750)
+        run_4(robot, -120, -120)
     elif Button.BLUETOOTH in hub.buttons.pressed() and Button.CENTER in hub.buttons.pressed() or Button.CENTER in hub.buttons.pressed() and Button.BLUETOOTH in hub.buttons.pressed():
         hub.system.shutdown()
