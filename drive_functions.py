@@ -1,17 +1,19 @@
 # Function for driving and turning
 
+from main import Robot
+
 def hold(left_motor, right_motor):
 #    left_motor.brake()
 #    right_motor.brake()
     left_motor.hold()
     right_motor.hold()
 
-def drive_straight(robot, speed=500, kp=10):
+def drive_straight(robot: Robot, speed=500, kp=10):
     heading = robot.hub.imu.heading()
     steering = -heading * kp
     robot.drive_base.drive(speed, steering)
 
-def move_distance(robot, distance, speed=500, kp=10):
+def move_distance(robot: Robot, distance, speed=500, kp=10):
     robot.drive_base.reset()
     robot.hub.imu.reset_heading(0)
     while robot.drive_base.distance() < distance:
@@ -20,7 +22,7 @@ def move_distance(robot, distance, speed=500, kp=10):
     # hold(robot.left_motor, robot.right_motor)
     robot.drive_base.stop()
 
-def move_backwards_distance(robot, distance, speed=500, kp=10):
+def move_backwards_distance(robot: Robot, distance, speed=500, kp=10):
     robot.drive_base.reset()
     robot.hub.imu.reset_heading(0)
     while -robot.drive_base.distance() < distance:
@@ -29,7 +31,7 @@ def move_backwards_distance(robot, distance, speed=500, kp=10):
     # hold(robot.left_motor, robot.right_motor)
     robot.drive_base.stop()
 
-def move_until_black_line(robot, speed=350, kp=7):
+def move_until_black_line(robot: Robot, speed=350, kp=7):
     robot.left_sensor.lights.off()
     robot.right_sensor.lights.off()
     robot.drive_base.reset()
@@ -57,7 +59,7 @@ def move_until_black_line(robot, speed=350, kp=7):
 
     hold(robot.left_motor, robot.right_motor)
 
-def sensor_1_move_until_black_line(robot, speed=500, kp=10):
+def sensor_1_move_until_black_line(robot: Robot, speed=500, kp=10):
     robot.left_sensor.lights.off()
     robot.right_sensor.lights.off()
     robot.drive_base.reset()
@@ -82,7 +84,7 @@ def reset_angle(left_motor, right_motor, angle=0):
     left_motor.reset_angle(angle)
     right_motor.reset_angle(angle)
 
-def turn_on_one_wheel(robot, angle, speed=150):
+def turn_on_one_wheel(robot: Robot, angle, speed=150):
     robot.hub.imu.reset_heading(0)
     right_turn = angle > 0
 
@@ -96,7 +98,7 @@ def turn_on_one_wheel(robot, angle, speed=150):
 
     hold(robot.left_motor, robot.right_motor)
 
-def turn(robot, angle, speed=100):
+def turn(robot: Robot, angle, speed=100):
     # Reseting both the angle and the heading variable of the robot
     robot.hub.imu.reset_heading(0)
     right_turn = angle > 0

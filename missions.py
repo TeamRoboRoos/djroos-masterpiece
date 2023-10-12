@@ -1,3 +1,4 @@
+from main import Robot
 from drive_functions import (
     hold,
     move_distance,
@@ -15,20 +16,20 @@ from attachment_functions import (
     rotate_both_attachment_motors
 )
 
-def rotate_both_motors(robot, Langle=0, Rangle=0, wait=False, speed=250):
+def rotate_both_motors(robot: Robot, Langle=0, Rangle=0, wait=False, speed=250):
     rotate_both_attachment_motors(robot, speed, Langle, Rangle, wait)
 
-def reset_attachment_motors(robot, angle=0, speed=250):
+def reset_attachment_motors(robot: Robot, angle=0, speed=250):
     reset_motors(robot, angle, speed)
 
-def run_1(robot):
+def run_1(robot: Robot):
     robot.hub.imu.reset_heading(0)
     move_distance(robot, 550, 250)
     rotate_both_motors(robot, 120)
     move_backwards_distance(robot, 550, 250)
     rotate_both_motors(robot, -120)
 
-def run_2(robot):
+def run_2(robot: Robot):
     robot.hub.imu.reset_heading(0)
     move_distance(robot, 300, 350)
     sensor_1_move_until_black_line(robot, 130, 7)
@@ -46,10 +47,10 @@ def run_2(robot):
     # wait(750)
     # move_distance(robot, 75)
 
-def run_3(robot, Lreseting_angle=0, Rreseting_angle=0):
+def run_3(robot: Robot, Lreseting_angle=0, Rreseting_angle=0):
     rotate_both_motors(robot, Lreseting_angle, Rreseting_angle)
 
-def run_4(robot, Lreseting_angle=0, Rreseting_angle=0):
+def run_4(robot: Robot, Lreseting_angle=0, Rreseting_angle=0):
     rotate_both_motors(robot, Lreseting_angle, Rreseting_angle)
 
 """def run_2(robot):
@@ -59,12 +60,12 @@ def run_4(robot, Lreseting_angle=0, Rreseting_angle=0):
     turn(robot, 45)
     move_distance(robot, 100)"""
 
-def mission_1(robot):
+def mission_1(robot: Robot):
     move_distance(robot, 2000, 500, 10)
 
-def mission_2(robot):
+def mission_2(robot: Robot):
     move_distance(robot, 800)
 
-def test_rotation(robot):
+def test_rotation(robot: Robot):
     rotate_left_attachment_motor(robot, 200, 120)
     rotate_right_attachment_motor(robot, 200, 120)

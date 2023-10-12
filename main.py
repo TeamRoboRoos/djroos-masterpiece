@@ -3,27 +3,47 @@ from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait, StopWatch
-from missions import run_1, run_2, run_3, run_4, mission_1, mission_2, test_rotation, reset_attachment_motors, rotate_both_motors
 from attachment_functions import reset_motors
 from hub_functions import countdown
+from missions import (
+    run_1,
+    run_2,
+    run_3,
+    run_4,
+    mission_1,
+    mission_2,
+    test_rotation,
+    reset_attachment_motors,
+    rotate_both_motors)
 
 # Robot class
 class Robot:
-    def __init__(self, hub, left_motor, right_motor, left_attachment_motor, right_attachment_motor, left_sensor, right_sensor, drive_base):
+    def __init__(
+        self,
+        hub: InventorHub,
+        left_motor: Motor,
+        right_motor: Motor,
+        left_attachment_motor: Motor,
+        right_attachment_motor: Motor,
+        left_sensor: ColorSensor,
+        right_sensor: ColorSensor,
+        drive_base: DriveBase
+    ):
         self.hub = hub
         self.left_motor = left_motor
         self.right_motor = right_motor
-        self.left_attachment_motor = left_attachment_motor
+        self.left_attachment_motor: Motor = left_attachment_motor
         self.right_attachment_motor = right_attachment_motor
         self.left_sensor = left_sensor
         self.right_sensor = right_sensor
         self.drive_base = drive_base
 
+# Initialise hub
 hub = InventorHub()
 
 # Initialise drive motors
-left_motor = Motor(Port.C, Direction.COUNTERCLOCKWISE)
-right_motor = Motor(Port.E)
+left_motor = Motor(Port.C, Direction.COUNTERCLOCKWISE, reset_angle=True)
+right_motor = Motor(Port.E, reset_angle=True)
 
 # Initialise attachment motors
 left_attachment_motor = Motor(Port.D)
@@ -37,9 +57,14 @@ right_sensor = ColorSensor(Port.B)
 drive_base = DriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
 
 # Initialise robot
-robot = Robot(hub, left_motor, right_motor, left_attachment_motor, right_attachment_motor, left_sensor, right_sensor, drive_base)
-
-print(f"Robot {robot}")
+robot = Robot(
+    hub,
+    left_motor,
+    right_motor,
+    left_attachment_motor,
+    right_attachment_motor,
+    left_sensor, right_sensor,
+    drive_base)
 
 # Lspeed, Lacceleration, Ltorqe = left_motor.control.limits()
 # Rspeed, Racceleration, Rtorqe = right_motor.control.limits()
