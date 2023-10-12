@@ -15,7 +15,7 @@ from attachment_functions import (
     rotate_both_attachment_motors
 )
 
-def rotate_both_motors(robot, Langle, Rangle, wait=False, speed=250):
+def rotate_both_motors(robot, Langle=0, Rangle=0, wait=False, speed=250):
     rotate_both_attachment_motors(robot, speed, Langle, Rangle, wait)
 
 def reset_attachment_motors(robot, angle=0, speed=250):
@@ -23,9 +23,10 @@ def reset_attachment_motors(robot, angle=0, speed=250):
 
 def run_1(robot):
     robot.hub.imu.reset_heading(0)
-    move_distance(robot, 450, 250)
-    rotate_both_motors(robot, 120, 120)
-    move_backwards_distance(robot, 450, 250)
+    move_distance(robot, 550, 250)
+    rotate_both_motors(robot, 120)
+    move_backwards_distance(robot, 550, 250)
+    rotate_both_motors(robot, -120)
 
 def run_2(robot):
     robot.hub.imu.reset_heading(0)
@@ -45,10 +46,10 @@ def run_2(robot):
     # wait(750)
     # move_distance(robot, 75)
 
-def run_3(robot):
-    turn(robot, 45, 250)
+def run_3(robot, Lreseting_angle=0, Rreseting_angle=0):
+    rotate_both_motors(robot, Lreseting_angle, Rreseting_angle)
 
-def run_4(robot, Lreseting_angle, Rreseting_angle):
+def run_4(robot, Lreseting_angle=0, Rreseting_angle=0):
     rotate_both_motors(robot, Lreseting_angle, Rreseting_angle)
 
 """def run_2(robot):
