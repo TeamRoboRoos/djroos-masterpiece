@@ -1,13 +1,7 @@
 """Robot driving functions.
 """
 
-from core import (
-    DEFAULT_DRIVE_SPEED,
-    DEFAULT_KP_LOOP_ITERATIONS,
-    DEFAULT_KP_VALUE,
-    DEFAULT_TURN_SPEED,
-    Robot,
-)
+from core import DEFAULT_DRIVE_SPEED, DEFAULT_KP_VALUE, DEFAULT_TURN_SPEED, DEFAULT_KP_LOOP_ITERATIONS, Robot
 
 
 def drive_straight(robot: Robot, index, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
@@ -17,11 +11,14 @@ def drive_straight(robot: Robot, index, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP
     :param speed: The speed to drive at.
     :param kp: The kp value.
     """
-    heading = robot.hub.imu.heading()
     if index != 0 and index % DEFAULT_KP_LOOP_ITERATIONS == 0:
+        heading = robot.hub.imu.heading()
         heading = -heading * kp
         print(f"Adjusting heaing by - {heading}")
-    robot.drive_base.drive(speed, heading)
+        robot.drive_base.drive(speed, heading)
+    else:
+        robot.drive_base.drive(speed, 0)
+    
 
 
 def move_distance(
@@ -45,7 +42,7 @@ def move_distance(
         index += 1
 
     # Stop the robot.
-    robot.drive_base.stop()
+    hold(robot)
 
 
 def move_backwards_distance(
@@ -190,6 +187,7 @@ def turn_accurate(robot: Robot, angle):
     # Check the heading.
     heading = robot.hub.imu.heading()
 
+
     # Determine correction angle.
     correction_angle = angle - heading
 
@@ -207,7 +205,6 @@ def set_acceleration(robot: Robot, acceleration):
     robot.drive_base.settings(
         straight_speed, acceleration, turn_rate, turn_acceleration
     )
-
 
 def hold(robot):
     """Stops the robot by holding both motors.
