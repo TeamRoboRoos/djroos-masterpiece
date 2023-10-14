@@ -49,6 +49,9 @@ hub.system.set_stop_button(None)
 
 # Menu system
 while True:
+    # Wait to prevent multiple button presses.
+    wait(150)
+
     # Prevent left button from shutting down hub.
     hub.system.set_stop_button(None)
 
