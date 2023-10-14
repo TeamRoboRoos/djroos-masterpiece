@@ -1,10 +1,16 @@
 """Robot driving functions.
 """
 
-from core import DEFAULT_DRIVE_SPEED, DEFAULT_KP_VALUE, DEFAULT_TURN_SPEED, Robot
+from core import (
+    DEFAULT_DRIVE_SPEED,
+    DEFAULT_KP_LOOP_ITERATIONS,
+    DEFAULT_KP_VALUE,
+    DEFAULT_TURN_SPEED,
+    Robot,
+)
 
 
-def drive_straight(robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
+def drive_straight(robot: Robot, index, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
     """Drives straight using the gyro and a kp value.
 
     :param robot: The robot class.
@@ -12,8 +18,10 @@ def drive_straight(robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE)
     :param kp: The kp value.
     """
     heading = robot.hub.imu.heading()
-    steering = -heading * kp
-    robot.drive_base.drive(speed, steering)
+    if index != 0 and index % DEFAULT_KP_LOOP_ITERATIONS == 0:
+        heading = -heading * kp
+        print(f"Adjusting heaing by - {heading}")
+    robot.drive_base.drive(speed, heading)
 
 
 def move_distance(
@@ -31,8 +39,10 @@ def move_distance(
     robot.hub.imu.reset_heading(0)
 
     # Keep driving until distance is reached.
+    index = 0
     while robot.drive_base.distance() < distance:
-        drive_straight(robot, speed, kp)
+        drive_straight(robot, index, speed, kp)
+        index += 1
 
     # Stop the robot.
     robot.drive_base.stop()
@@ -168,6 +178,35 @@ def turn(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
             robot.left_motor.run(-speed)
 
     hold(robot)
+
+
+def turn_accurate(robot: Robot, angle):
+    # Reset the heading before turning.
+    robot.hub.imu.reset_heading(0)
+
+    # Perform the turn.
+    robot.drive_base.turn(angle)
+
+    # Check the heading.
+    heading = robot.hub.imu.heading()
+
+    # Determine correction angle.
+    correction_angle = angle - heading
+
+    # Correct the angle.
+    robot.drive_base.turn(correction_angle)
+
+
+def set_acceleration(robot: Robot, acceleration):
+    (
+        straight_speed,
+        straight_acceleration,
+        turn_rate,
+        turn_acceleration,
+    ) = robot.drive_base.settings()
+    robot.drive_base.settings(
+        straight_speed, acceleration, turn_rate, turn_acceleration
+    )
 
 
 def hold(robot):

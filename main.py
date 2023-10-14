@@ -1,11 +1,16 @@
 from pybricks.hubs import InventorHub
 from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
 from pybricks.pupdevices import ColorSensor, Motor, UltrasonicSensor
-from pybricks.robotics import DriveBase
+from pybricks.robotics import DriveBase, GyroDriveBase
 from pybricks.tools import StopWatch, wait
 
-from core import DEFAULT_WAIT_TIME, Robot
-from missions import run_1, run_1B, run_2, run_3, run_4
+from core import (
+    DEFAULT_ACCELERATION,
+    DEFAULT_TURN_ACCELERATION,
+    DEFAULT_WAIT_TIME,
+    Robot,
+)
+from missions import run_1, run_1B, run_2, run_3, run_4, test_1
 
 # Initialise hub
 hub = InventorHub()
@@ -23,7 +28,16 @@ left_sensor = ColorSensor(Port.A)
 right_sensor = ColorSensor(Port.B)
 
 # Initialise drive base
-drive_base = DriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
+# drive_base = DriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
+drive_base = GyroDriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
+# Set the acceleration.
+(
+    straight_speed,
+    straight_acceleration,
+    turn_rate,
+    turn_acceleration,
+) = drive_base.settings()
+drive_base.settings(300, DEFAULT_ACCELERATION, turn_rate, DEFAULT_TURN_ACCELERATION)
 
 # Initialise robot
 robot = Robot(
@@ -37,11 +51,15 @@ robot = Robot(
     drive_base,
 )
 
-print(robot)
+# Wait for imu to be calibrated.
+while not hub.imu.ready():
+    print("Waiting for imu to become ready ...")
+
+print("Robot calibrated and ready")
 
 # Menu index
 min_index = 1
-index = 2
+index = 1
 max_index = 10
 
 # Prevent centre button from shutting down hub
@@ -49,14 +67,12 @@ hub.system.set_stop_button(None)
 
 # Menu system
 while True:
-    # Wait to prevent multiple button presses.
-    wait(150)
-
     # Prevent left button from shutting down hub.
     hub.system.set_stop_button(None)
 
     # Navigate menu index with left and right buttons.
     if Button.RIGHT in hub.buttons.pressed():
+        wait(150)
         index += 1
         hub.speaker.beep(1000, 100)
         hub.light.on(Color.BLUE)
@@ -66,6 +82,7 @@ while True:
             hub.speaker.beep(index * 250, 100)
 
     elif Button.LEFT in hub.buttons.pressed():
+        wait(150)
         index -= 1
         hub.light.on(Color.YELLOW)
         if index < min_index:
@@ -82,7 +99,7 @@ while True:
         hub.system.set_stop_button(Button.LEFT)
         if index == 1:
             wait(DEFAULT_WAIT_TIME)
-            run_1B(robot)
+            test_1(robot)
         elif index == 2:
             wait(DEFAULT_WAIT_TIME)
             run_2(robot)

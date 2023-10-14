@@ -14,7 +14,9 @@ from drive_functions import (
     move_until_black_line,
     right_sensor_move_until_black_line,
     turn,
+    turn_accurate,
     turn_on_one_wheel,
+    set_acceleration,
 )
 
 
