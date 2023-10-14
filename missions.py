@@ -32,7 +32,7 @@ def run_1B(robot: Robot):
     """Adapted version of 'run_1' using the jig we use for 'run_2' to make it more efficient and easier"""
     move_distance(robot, 70)
     turn(robot, -37)
-    move_distance(robot, 450, 250)
+    move_distance(robot, 460, 250)
     rotate_left_attachment_motor(robot, 120)
     move_backwards_distance(robot, 500)
     rotate_left_attachment_motor(robot, -120)
