@@ -1,6 +1,15 @@
 from pybricks.hubs import InventorHub
-from pybricks.pupdevices import Motor, ColorSensor
+from pybricks.parameters import Stop
+from pybricks.pupdevices import ColorSensor, Motor
 from pybricks.robotics import DriveBase
+
+DEFAULT_DRIVE_SPEED = 300
+DEFAULT_TURN_SPEED = 150
+DEFAULT_ATTACHMENT_SPEED = 250
+DEFAULT_KP_VALUE = 3
+DEFAULT_HOLD_METHOD = Stop.BRAKE
+DEFAULT_WAIT_TIME = 750
+
 
 # Robot class
 class Robot:
@@ -13,7 +22,7 @@ class Robot:
         right_attachment_motor: Motor,
         left_sensor: ColorSensor,
         right_sensor: ColorSensor,
-        drive_base: DriveBase
+        drive_base: DriveBase,
     ):
         self.hub = hub
         self.left_motor = left_motor

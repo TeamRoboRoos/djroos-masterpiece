@@ -1,5 +1,6 @@
 from pybricks.tools import wait
 
+
 def countdown(hub, count):
     if count > 0:
         if count < 10:
