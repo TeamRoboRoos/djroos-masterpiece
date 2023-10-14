@@ -1,6 +1,6 @@
 # Function for driving and turning
 
-from main import Robot
+from core import Robot
 
 def hold(left_motor, right_motor):
 #    left_motor.brake()
@@ -8,12 +8,12 @@ def hold(left_motor, right_motor):
     left_motor.hold()
     right_motor.hold()
 
-def drive_straight(robot: Robot, speed=500, kp=10):
+def drive_straight(robot: Robot, speed=300, kp=3):
     heading = robot.hub.imu.heading()
     steering = -heading * kp
     robot.drive_base.drive(speed, steering)
 
-def move_distance(robot: Robot, distance, speed=500, kp=10):
+def move_distance(robot: Robot, distance, speed=300, kp=10):
     robot.drive_base.reset()
     robot.hub.imu.reset_heading(0)
     while robot.drive_base.distance() < distance:
@@ -22,7 +22,7 @@ def move_distance(robot: Robot, distance, speed=500, kp=10):
     # hold(robot.left_motor, robot.right_motor)
     robot.drive_base.stop()
 
-def move_backwards_distance(robot: Robot, distance, speed=500, kp=10):
+def move_backwards_distance(robot: Robot, distance, speed=300, kp=10):
     robot.drive_base.reset()
     robot.hub.imu.reset_heading(0)
     while -robot.drive_base.distance() < distance:
@@ -109,7 +109,7 @@ def turn(robot: Robot, angle, speed=100):
             robot.right_motor.run(-speed)
             robot.left_motor.run(speed)
     else:
-        while hub.imu.heading() > angle:
+        while robot.hub.imu.heading() > angle:
             robot.right_motor.run(speed)
             robot.left_motor.run(-speed)
 

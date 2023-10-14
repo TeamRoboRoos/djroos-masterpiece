@@ -1,15 +1,16 @@
 # Functions for attachments
-from main import Robot
+from core import Robot
+from pybricks.parameters import Stop
 
-def rotate_right_attachment_motor(robot: Robot, speed, angle, waita=False):
-    robot.right_attachment_motor.run_angle(speed, angle, wait=wait)
+def rotate_right_attachment_motor(robot: Robot, angle, speed=250, holding_method=Stop.BRAKE, wait=False):
+    robot.right_attachment_motor.run_angle(speed, angle, holding_method, wait=wait)
 
-def rotate_left_attachment_motor(robot: Robot, speed, angle, waita=False):
-    robot.left_attachment_motor.run_angle(speed, angle, wait=waita)
+def rotate_left_attachment_motor(robot: Robot, angle, speed=250, holding_method=Stop.BRAKE, wait=False):
+    robot.left_attachment_motor.run_angle(speed, angle, holding_method, wait=wait)
 
-def rotate_both_attachment_motors(robot: Robot, speed, Langle, Rangle, waitA=False):
-    robot.left_attachment_motor.run_angle(speed, Langle, wait=waitA)
-    robot.right_attachment_motor.run_angle(speed, Rangle)
+def rotate_both_attachment_motors(robot: Robot, left_angle, right_angle, speed=250, holding_method=Stop.BRAKE, wait=False):
+    rotate_left_attachment_motor(robot, left_angle, speed, holding_method, wait=wait)
+    rotate_right_attachment_motor(robot, right_angle, speed, holding_method)
 
 
 def reset_motors(robot: Robot, angle=0, speed=250):
