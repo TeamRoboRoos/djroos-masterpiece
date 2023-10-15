@@ -1,16 +1,17 @@
 from pybricks.hubs import InventorHub
 from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
 from pybricks.pupdevices import ColorSensor, Motor, UltrasonicSensor
-from pybricks.robotics import DriveBase, GyroDriveBase
+from pybricks.robotics import DriveBase
 from pybricks.tools import StopWatch, wait
 
 from core import (
     DEFAULT_ACCELERATION,
     DEFAULT_TURN_ACCELERATION,
     DEFAULT_WAIT_TIME,
+    DEFAULT_DRIVE_SPEED,
     Robot,
 )
-from missions import run_1, run_1B, run_2, run_3, run_4, test_1
+from missions import run_1, run_1B, run_2, run_3, run_4
 
 # Initialise hub
 hub = InventorHub()
@@ -28,8 +29,7 @@ left_sensor = ColorSensor(Port.A)
 right_sensor = ColorSensor(Port.B)
 
 # Initialise drive base
-# drive_base = DriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
-drive_base = GyroDriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
+drive_base = DriveBase(left_motor, right_motor, wheel_diameter=60, axle_track=90)
 # Set the acceleration.
 (
     straight_speed,
@@ -37,7 +37,7 @@ drive_base = GyroDriveBase(left_motor, right_motor, wheel_diameter=60, axle_trac
     turn_rate,
     turn_acceleration,
 ) = drive_base.settings()
-drive_base.settings(300, DEFAULT_ACCELERATION, turn_rate, DEFAULT_TURN_ACCELERATION)
+drive_base.settings(DEFAULT_DRIVE_SPEED, DEFAULT_ACCELERATION, turn_rate, DEFAULT_TURN_ACCELERATION)
 
 # Initialise robot
 robot = Robot(

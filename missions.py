@@ -14,7 +14,6 @@ from drive_functions import (
     move_until_black_line,
     right_sensor_move_until_black_line,
     turn,
-    turn_accurate,
     turn_on_one_wheel,
     set_acceleration,
 )
@@ -31,26 +30,36 @@ def run_1(robot: Robot):
 
 def run_1B(robot: Robot):
     """Adapted version of 'run_1' using the jig we use for 'run_2' to make it more efficient and easier"""
-    move_distance(robot, 70)
-    turn(robot, -37)
-    move_distance(robot, 460, 250)
-    rotate_left_attachment_motor(robot, 120)
-    move_backwards_distance(robot, 500)
-    rotate_left_attachment_motor(robot, -120)
-
+    move_distance(robot, 150, 100)
+    turn(robot, -38)
+    wait(100)
+    move_distance(robot, 280, 150)
+    rotate_left_attachment_motor(robot, 120, wait=True)
+    wait(DEFAULT_WAIT_TIME)
+    # # turn(robot, 2)
+    robot.drive_base.straight(90)
+    # move_distance(robot, 50)
+    move_backwards_distance(robot, 200, 250)
+    move_backwards_distance(robot, 150, 500)
+    turn(robot, -27)
+    move_backwards_distance(robot, 250, 500)
+    # rotate_left_attachment_motor(robot, -120, 500)
 
 def run_2(robot: Robot):
     """Mission 6 and 7"""
     robot.hub.imu.reset_heading(0)
-    move_distance(robot, 300, 350)
-    right_sensor_move_until_black_line(robot, 130)
-    move_distance(robot, 70, 390)
-    turn_on_one_wheel(robot, 45, 150)
-    move_distance(robot, 50)
-    move_backwards_distance(robot, 50)
+    move_distance(robot, 680, 250)
+    wait(DEFAULT_WAIT_TIME)
+    turn(robot, -1)
+    move_distance(robot, 60, 150)
+    wait(DEFAULT_WAIT_TIME) 
+    turn(robot, 42)
+    wait(100)
+    move_distance(robot, 35)
+    wait(100)
+    move_backwards_distance(robot, 90)
     turn(robot, -45)
-    move_backwards_distance(robot, 700)
-
+    move_backwards_distance(robot, 700, 500)
 
 def run_3(robot: Robot, Lreseting_angle=0, Rreseting_angle=0):
     """Mission 8 and rolling camara mission"""

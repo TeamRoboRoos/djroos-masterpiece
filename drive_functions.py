@@ -151,42 +151,12 @@ def turn_on_one_wheel(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
     hold(robot)
 
 
-def turn(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
-    """Turns the robot to the given angle.
-
-    Turns right if the angle is greater than 0, otherwise turns left.
-
-    :param robot: The robot instance.
-    :param angle: The target angle.
-    :param speed: The speed of the turn.
-    """
-    # Resetting both the angle and the heading variable of the robot
-    robot.hub.imu.reset_heading(0)
-    right_turn = angle > 0
-
-    # Checks if the robot should turn right or left
-    if right_turn:
-        while robot.hub.imu.heading() < angle:
-            robot.right_motor.run(-speed)
-            robot.left_motor.run(speed)
-    else:
-        while robot.hub.imu.heading() > angle:
-            robot.right_motor.run(speed)
-            robot.left_motor.run(-speed)
-
-    hold(robot)
-
-
-def turn_accurate(robot: Robot, angle):
-    # Reset the heading before turning.
-    robot.hub.imu.reset_heading(0)
-
+def turn(robot: Robot, angle):
     # Perform the turn.
     robot.drive_base.turn(angle)
 
     # Check the heading.
     heading = robot.hub.imu.heading()
-
 
     # Determine correction angle.
     correction_angle = angle - heading
