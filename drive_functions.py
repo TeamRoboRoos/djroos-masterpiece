@@ -2,22 +2,19 @@
 """
 
 from core import DEFAULT_DRIVE_SPEED, DEFAULT_KP_VALUE, DEFAULT_TURN_SPEED, DEFAULT_KP_LOOP_ITERATIONS, Robot
+from pybricks.tools import StopWatch
 
-
-def drive_straight(robot: Robot, index, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
+def drive_straight(robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
     """Drives straight using the gyro and a kp value.
 
     :param robot: The robot class.
     :param speed: The speed to drive at.
     :param kp: The kp value.
     """
-    if index != 0 and index % DEFAULT_KP_LOOP_ITERATIONS == 0:
-        heading = robot.hub.imu.heading()
-        heading = -heading * kp
-        print(f"Adjusting heaing by - {heading}")
-        robot.drive_base.drive(speed, heading)
-    else:
-        robot.drive_base.drive(speed, 0)
+    heading = robot.hub.imu.heading()
+    steering = -heading * kp
+    robot.drive_base.drive(speed, steering)
+
     
 
 
@@ -36,10 +33,8 @@ def move_distance(
     robot.hub.imu.reset_heading(0)
 
     # Keep driving until distance is reached.
-    index = 0
     while robot.drive_base.distance() < distance:
-        drive_straight(robot, index, speed, kp)
-        index += 1
+        drive_straight(robot, speed, kp)
 
     # Stop the robot.
     hold(robot)
@@ -65,6 +60,18 @@ def move_backwards_distance(
 
     robot.drive_base.stop()
 
+
+def drive_timed(robot: Robot, run_time, speed=DEFAULT_DRIVE_SPEED):
+    run_time_ms = run_time * 1000
+    stopwatch = StopWatch()
+    stopwatch.reset()
+    stopwatch.resume()
+    start_time = stopwatch.time()
+    elapsed = stopwatch.time() - start_time
+    while elapsed < run_time_ms:
+        drive_straight(robot, speed)
+        elapsed = stopwatch.time() - start_time
+    hold(robot)
 
 def move_until_black_line(robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
     """Move until both colour sensors detect a black line.
@@ -150,6 +157,30 @@ def turn_on_one_wheel(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
 
     hold(robot)
 
+
+
+def turn_speed(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
+    """Turns the robot to the given angle.
+    Turns right if the angle is greater than 0, otherwise turns left.
+    :param robot: The robot instance.
+    :param angle: The target angle.
+    :param speed: The speed of the turn.
+    """
+    # Resetting both the angle and the heading variable of the robot
+    robot.hub.imu.reset_heading(0)
+    right_turn = angle > 0
+
+    # Checks if the robot should turn right or left
+    if right_turn:
+        while robot.hub.imu.heading() < angle:
+            robot.right_motor.run(-speed)
+            robot.left_motor.run(speed)
+    else:
+        while robot.hub.imu.heading() > angle:
+            robot.right_motor.run(speed)
+            robot.left_motor.run(-speed)
+
+    hold(robot)
 
 def turn(robot: Robot, angle):
     # Perform the turn.
