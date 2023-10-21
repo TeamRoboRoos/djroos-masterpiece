@@ -2,7 +2,7 @@
 """
 
 from core import DEFAULT_DRIVE_SPEED, DEFAULT_KP_VALUE, DEFAULT_TURN_SPEED, DEFAULT_KP_LOOP_ITERATIONS, Robot
-from pybricks.tools import StopWatch
+from pybricks.tools import StopWatch, wait
 
 def drive_straight(robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
     """Drives straight using the gyro and a kp value.
@@ -182,18 +182,45 @@ def turn_speed(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
 
     hold(robot)
 
-def turn(robot: Robot, angle):
+def turn(robot: Robot, target_angle):
     # Perform the turn.
-    robot.drive_base.turn(angle)
+    turn_speed(robot, target_angle)
 
-    # Check the heading.
+    delta = get_delta(robot, target_angle)
+
+    print(f"Delta is {delta}")
+
+    while abs(delta) > 1:
+        # Correct the angle.
+        turn_speed(robot, delta)
+        delta = get_delta(robot, target_angle)
+        print(f"Delta is {delta}")
+        wait(100)
+
+
+def get_delta(robot: Robot, target_angle) -> int:
     heading = robot.hub.imu.heading()
 
-    # Determine correction angle.
-    correction_angle = angle - heading
+    print(f"Heading before correction {heading}")
+    
+    left_turn = target_angle < 0
+    if left_turn:
+        if heading < target_angle:
+            # Overshoot
+            delta = heading - target_angle
+        else:
+            # Undershoot
+            delta = target_angle - heading
+    else:
+        if heading < target_angle:
+            # Undershoot
+            delta = target_angle - heading
+        else:
+            # Overshoot
+            delta = heading - target_angle
 
-    # Correct the angle.
-    robot.drive_base.turn(correction_angle)
+    return delta
+            
 
 
 def set_acceleration(robot: Robot, acceleration):
