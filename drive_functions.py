@@ -30,7 +30,6 @@ def move_distance(
     """
     # Reset the accumulated drive distance and heading.
     robot.drive_base.reset()
-    robot.hub.imu.reset_heading(0)
 
     # Keep driving until distance is reached.
     while robot.drive_base.distance() < distance:
@@ -158,6 +157,9 @@ def turn_on_one_wheel(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
     hold(robot)
 
 
+def short_turn_angle(angle):
+    return (angle - hub.imu.heading() +180) % 360 -180
+
 
 def turn_speed(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
     """Turns the robot to the given angle.
@@ -195,6 +197,19 @@ def turn(robot: Robot, target_angle, speed=DEFAULT_TURN_SPEED):
         wait(100)
 
     wait(250)
+
+
+def get_ramp_turn(angle):
+    return ((MAX_TURN_SPEED - MIN_TURN_SPEED)/180)*angle + MIN_TURN_SPEED * sign(angle)
+
+
+def turnTo(angle, tolerance=1):
+    error_angle = short_turn_angle(angle)
+    while round(error_angle) not in range(-tolerance, tolerance):
+        print(error_angle)
+        drive_base.drive(0, get_ramp_turn(error_angle))
+        error_angle = short_turn_angle(angle)
+    drive_base.stop()
 
 
 def get_delta(robot: Robot, target_angle) -> int:
