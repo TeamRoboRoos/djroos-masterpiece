@@ -167,7 +167,6 @@ def turn_speed(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
     :param speed: The speed of the turn.
     """
     # Resetting both the angle and the heading variable of the robot
-    robot.hub.imu.reset_heading(0)
     right_turn = angle > 0
 
     # Checks if the robot should turn right or left
@@ -182,20 +181,20 @@ def turn_speed(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
 
     hold(robot)
 
-def turn(robot: Robot, target_angle):
+def turn(robot: Robot, target_angle, speed=DEFAULT_TURN_SPEED):
     # Perform the turn.
-    turn_speed(robot, target_angle)
+    turn_speed(robot, target_angle, speed)
 
     delta = get_delta(robot, target_angle)
 
-    print(f"Delta is {delta}")
-
     while abs(delta) > 1:
         # Correct the angle.
-        turn_speed(robot, delta)
+        turn_speed(robot, delta, speed)
+        print(f"Heading after correction - {robot.hub.imu.heading()}")
         delta = get_delta(robot, target_angle)
-        print(f"Delta is {delta}")
         wait(100)
+
+    wait(250)
 
 
 def get_delta(robot: Robot, target_angle) -> int:
@@ -218,6 +217,8 @@ def get_delta(robot: Robot, target_angle) -> int:
         else:
             # Overshoot
             delta = heading - target_angle
+
+    print(f"Delta is {delta}")
 
     return delta
             

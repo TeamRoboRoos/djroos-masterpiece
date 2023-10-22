@@ -1,9 +1,6 @@
 from pybricks.tools import wait
 
-from core import (
-    DEFAULT_WAIT_TIME,
-    DEFAULT_DRIVE_SPEED
-)
+from core import DEFAULT_WAIT_TIME, DEFAULT_DRIVE_SPEED
 
 from attachment_functions import *
 from core import Robot
@@ -21,19 +18,20 @@ def run_1(robot: Robot):
 
 def run_1B(robot: Robot):
     """Adapted version of 'run_1' using the jig we use for 'run_2' to make it more efficient and easier"""
-    move_distance(robot, 150, 100)
-    turn(robot, -55)
-    # wait(100)
-    # move_distance(robot, 280, 150)
-    # rotate_left_attachment_motor(robot, 120, wait=True)
-    # wait(DEFAULT_WAIT_TIME)
-    # # # turn(robot, 2)
+    move_distance(robot, 180, 100)
+    turn(robot, -44)
+    wait(100)
+    move_distance(robot, 250, 150)
+    rotate_left_attachment_motor(robot, 130, wait=True)
+    wait(DEFAULT_WAIT_TIME)
+    # # turn(robot, 2)
+    move_distance(robot, 30)
     # move_distance(robot, 50)
-    # # move_distance(robot, 50)
-    # move_backwards_distance(robot, 200, 250)
-    # turn(robot, -27)
-    # move_backwards_distance(robot, 250, 500)
-    # rotate_left_attachment_motor(robot, -120, 500)
+    move_backwards_distance(robot, 200, 250)
+    turn(robot, -23)
+    move_backwards_distance(robot, 300, 500)
+    # rotate_left_attachment_motor(robot, -130, 500)
+
 
 def run_2(robot: Robot):
     """Mission 6 and 7"""
@@ -42,14 +40,15 @@ def run_2(robot: Robot):
     wait(DEFAULT_WAIT_TIME)
     # turn(robot, -1)
     move_distance(robot, 40, 150)
-    # wait(DEFAULT_WAIT_TIME) 
+    # wait(DEFAULT_WAIT_TIME)
     turn(robot, 42)
     wait(100)
-    move_distance(robot, 35)
+    move_distance(robot, 50)
     wait(100)
     move_backwards_distance(robot, 90)
     turn(robot, -45)
     move_backwards_distance(robot, 650, 500)
+
 
 def run_3(robot: Robot, Lreseting_angle=0, Rreseting_angle=0):
     """Mission 8 and rolling camara mission"""
@@ -67,7 +66,7 @@ def run_3(robot: Robot, Lreseting_angle=0, Rreseting_angle=0):
     turn_speed(robot, -12, speed=200)
     move_distance(robot, 400)
     rotate_right_attachment_motor(robot, 120, 1000)
-    left_run_target(robot, 40)
+
 
 def run_4(robot: Robot):
     """Robot driving from blue to red home base"""
@@ -81,6 +80,7 @@ def run_4(robot: Robot):
     move_backwards_distance(robot, 500, 250)
     rotate_left_attachment_motor(robot, 200)
 
+
 def run_5(robot: Robot):
     move_distance(robot, 380, 200)
     wait(DEFAULT_WAIT_TIME)
@@ -89,41 +89,32 @@ def run_5(robot: Robot):
     turn(robot, -27)
     move_backwards_distance(robot, 380, 200)
 
+
 def run_6(robot: Robot):
-    move_distance(robot, 380)
-    # wait(DEFAULT_WAIT_TIME)
-    turn(robot, -74)
-    wait(150)
-    move_distance(robot, 870)
-    # turn(robot, -5)
-    # move_distance(robot, 460)
-    # wait(DEFAULT_WAIT_TIME)
-    # turn(robot, -42)
+    move_distance(robot, 330, 200)
+    print(f"Heading is - {robot.hub.imu.heading()}")
+    turn(robot, -45)
+    move_distance(robot, 400, 200)
+    turn(robot, -23, 100)
+    move_distance(robot, 420, 200)
+    rotate_left_attachment_motor(robot, -150, wait=True)
+    turn(robot, -7)
+    wait(100)
+    rotate_left_attachment_motor(robot, 150)
+    move_backwards_distance(robot, 110, speed=200)
+    turn(robot, -75 )
+    move_distance(robot, 300, 200)
+    rotate_right_attachment_motor(robot, 150, wait=True)
+    rotate_right_attachment_motor(robot, -150)
+    raise KeyboardInterrupt
+    # move_distance(robot, 40, 500)
     # wait(1000)
-    # move_distance(robot, 220)#75+10+25+40
-    # rotate_left_attachment_motor(robot, 130, wait=True)
-    wait(750)
-    turn(robot, -10)
-    robot.left_attachment_motor.run_time(350, 900, wait=True)
-    wait(2500)
-    rotate_left_attachment_motor(robot, -250)
-    # robot.right_attachment_motor.run_time(1000, 1000)
-    # wait(DEFAULT_WAIT_TIME)
-    # move_distance(robot, 200)
-    # wait(DEFAULT_WAIT_TIME)
-    # move_distance(robot, 75, DEFAULT_DRIVE_SPEED/2)
-    # rotate_left_attachment_motor(robot, 250)
-    # wait(2500)
-    # rotate_left_attachment_motor(robot, -250)
-    # move_backwards_distance(robot, 150)
-    # turn(robot, -120)
-    # move_distance(robot, 300)
-    # rotate_right_attachment_motor(robot, -130)
+    # move_backwards_distance(robot, 40, 500)
+    # rotate_left_attachment_motor(robot, 180, 1000, wait=True)
+    # wait(1000)
+    # rotate_left_attachment_motor(robot, -180, 1000)
+
 
 def test(robot: Robot):
-    rotate_left_attachment_motor(robot, 140, 300, wait=True)
-    rotate_left_attachment_motor(robot, -140, 1000)
-    move_backwards_distance(robot, 150, 150)
-    turn(robot, -90)
-    move_distance(robot, 200)
-    # turn()
+    move_distance(robot, 100)
+    turn(robot, -45)
