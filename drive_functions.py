@@ -51,7 +51,6 @@ def move_backwards_distance(
     """
     # Reset the accumulated drive distance and heading.
     robot.drive_base.reset()
-    robot.hub.imu.reset_heading(0)
 
     # Negate the distance since we are driving backwards.
     while -robot.drive_base.distance() < distance:
@@ -157,8 +156,8 @@ def turn_on_one_wheel(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
     hold(robot)
 
 
-def short_turn_angle(angle):
-    return (angle - hub.imu.heading() +180) % 360 -180
+def short_turn_angle(robot: Robot, angle):
+    return (angle - robot.hub.imu.heading() +180) % 360 -180
 
 
 def turn_speed(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
@@ -200,19 +199,18 @@ def turn(robot: Robot, target_angle, speed=DEFAULT_TURN_SPEED):
 
 
 def get_ramp_turn(angle):
-    return ((MAX_TURN_SPEED - MIN_TURN_SPEED)/180)*angle + MIN_TURN_SPEED * sign(angle)
+    return ((120 - 50)/180)*angle + 50 * sign(angle)
 
 
-def turnTo(angle, tolerance=1):
-    error_angle = short_turn_angle(angle)
+def turnTo(robot: Robot, angle, tolerance=1):
+    error_angle = short_turn_angle(robot, angle)
     while round(error_angle) not in range(-tolerance, tolerance):
-        print(error_angle)
-        drive_base.drive(0, get_ramp_turn(error_angle))
-        error_angle = short_turn_angle(angle)
-    drive_base.stop()
+        robot.drive_base.drive(0, get_ramp_turn(error_angle))
+        error_angle = short_turn_angle(robot, angle)
+    robot.drive_base.stop()
 
 
-def move(robot: Robot, distance, top_speed, heading):
+def move(robot: Robot, distance, heading, top_speed=DEFAULT_DRIVE_SPEED):
     
     #create new variable to convert distance to absolute value
     posdistance = abs(distance)
@@ -270,6 +268,8 @@ def get_delta(robot: Robot, target_angle) -> int:
 
     return delta
             
+def sign(num):
+    return 1 if num >= 0 else -1
 
 
 def set_acceleration(robot: Robot, acceleration):
