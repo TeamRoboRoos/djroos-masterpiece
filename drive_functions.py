@@ -212,6 +212,39 @@ def turnTo(angle, tolerance=1):
     drive_base.stop()
 
 
+def move(robot: Robot, distance, top_speed, heading):
+    
+    #create new variable to convert distance to absolute value
+    posdistance = abs(distance)
+    section = posdistance / 3
+    robot.drive_base.reset()
+    # current distance at initial read will be 0 due to drive base reset
+    current_distance = robot.drive_base.distance()
+    
+    # compare current distance with desired distance
+    # (note negative distance is already converted to absolute value)
+    while current_distance < posdistance:
+        if current_distance < section:
+            speed = ((top_speed - 20)/section) * current_distance + 20
+        elif current_distance > section and current_distance < section * 2:
+            speed = top_speed
+        else:
+            speed = (-(top_speed - 20)/section) * (current_distance - posdistance) + 20
+        
+        KPfactor = -0.004 * speed + 4.2
+        head = robot.hub.imu.heading() - heading
+        turn = -head * KPfactor
+        
+        # pass original distance value to sign function to return 1 or -1 to
+        # multiply with speed value to determine forward(+) or backward(-) drive
+        robot.drive_base.drive(speed*sign(distance),turn)
+
+        # read current distance but convert to absolute value to cover for
+        # backward drive for comparison with absolute distance value
+        current_distance = abs(robot.drive_base.distance())
+    robot.drive_base.stop()
+
+
 def get_delta(robot: Robot, target_angle) -> int:
     heading = robot.hub.imu.heading()
 
