@@ -45,7 +45,7 @@ while not hub.imu.ready():
 current_voltage = robot.hub.battery.voltage()
 battery_percentage = (current_voltage / BATTERY_MAX_VOLTAGE) * 100
 
-print(f"Robot calibrated and ready - {battery_percentage}% charged")
+print(f"Robot calibrated and ready - {round(battery_percentage, 2)}% charged")
 
 # Menu index
 min_index = 0

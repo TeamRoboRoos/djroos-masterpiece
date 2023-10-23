@@ -25,7 +25,7 @@ def move(
     :param wait_after_move: Whether to wait for a bit after the move.
     """
     # Determine the top speed based on the distance
-    top_speed = max_speed if max_speed else _get_max_speed(distance)
+    applied_max_speed = max_speed if max_speed else _get_max_speed(distance)
 
     # create new variable to convert distance to absolute value
     absolute_distance = abs(distance)
@@ -41,7 +41,7 @@ def move(
             constant_speed
             if constant_speed
             else _get_ramp_speed(
-                top_speed, current_distance, absolute_distance, section_distance
+                applied_max_speed, current_distance, absolute_distance, section_distance
             )
         )
 
@@ -193,6 +193,34 @@ def _get_ramp_speed(top_speed, current_distance, total_distance, section_distanc
         return (-(top_speed - 20) / section_distance) * (
             current_distance - total_distance
         ) + 20
+
+
+def _alternate_get_ramp_speed(
+    max_speed,
+    total_distance,
+    current_distance,
+    acceleration_factor=DEFAULT_ACCELERATION_FACTOR,
+):
+    first_third = total_distance / 3
+    last_third = first_third * 2
+    if current_distance == 0:
+        return 20
+    elif current_distance < first_third:
+        return min(
+            max_speed * ((current_distance / first_third) * acceleration_factor),
+            max_speed,
+        )
+    elif current_distance > last_third:
+        return min(
+            (
+                max_speed
+                * ((total_distance - current_distance) / first_third)
+                * acceleration_factor
+            ),
+            max_speed,
+        )
+    else:
+        return max_speed
 
 
 def _get_kp_angle(current_heading, target_heading, speed):

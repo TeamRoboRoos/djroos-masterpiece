@@ -12,6 +12,9 @@ LARGE_ANGLE_THRESHOLD = 60
 # The max drive speed to use for large distances.
 DEFAULT_MAX_SPEED = 500
 
+# The default acceleration/deceleration factor for the ramp speed.
+DEFAULT_ACCELERATION_FACTOR = 1
+
 # The max drive speed to use for smaller distances giving better accuracy.
 DEFAULT_ACCURATE_SPEED = 300
 
@@ -46,7 +49,7 @@ DEFAULT_ATTACHMENT_SPEED = 250
 DEFAULT_HOLD_METHOD = Stop.BRAKE
 
 # The Inventor Hub max voltage to determine battery capacity.
-BATTERY_MAX_VOLTAGE = 8320
+BATTERY_MAX_VOLTAGE = 8429
 
 
 # Robot class
