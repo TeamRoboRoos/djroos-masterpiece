@@ -5,7 +5,14 @@ from core import *
 from pybricks.tools import StopWatch, wait
 
 
-def move(robot: Robot, distance, heading, constant_speed=None):
+def move(
+    robot: Robot,
+    distance,
+    heading,
+    constant_speed=None,
+    max_speed=None,
+    wait_after_move=True,
+):
     """Move the robot forward and backwards.
 
     Uses a ramp speed function to accelerate to top speed then decelerate before stopping.
@@ -14,9 +21,11 @@ def move(robot: Robot, distance, heading, constant_speed=None):
     :param distance: The distance in mm. Positive is for forwards and negative for backwards.
     :param heading: The heading to move towards.
     :param constant_speed: Move at a constant speed if specified, otherwise use ramp speed.
+    :param max_speed: The maximum speed for the ramp function.
+    :param wait_after_move: Whether to wait for a bit after the move.
     """
     # Determine the top speed based on the distance
-    top_speed = _get_top_speed(distance)
+    top_speed = max_speed if max_speed else _get_max_speed(distance)
 
     # create new variable to convert distance to absolute value
     absolute_distance = abs(distance)
@@ -46,7 +55,8 @@ def move(robot: Robot, distance, heading, constant_speed=None):
         # backward drive for comparison with absolute distance value
         current_distance = abs(robot.drive_base.distance())
     robot.drive_base.stop()
-    wait(DEFAULT_WAIT_AFTER_MOVE)
+    if wait_after_move:
+        wait(DEFAULT_WAIT_AFTER_MOVE)
 
 
 def move_timed(robot: Robot, run_time, heading, speed):
@@ -71,7 +81,7 @@ def move_timed(robot: Robot, run_time, heading, speed):
     wait(DEFAULT_WAIT_AFTER_MOVE)
 
 
-def turn(robot: Robot, target_angle, tolerance=1, constant_turn_rate=None):
+def turn(robot: Robot, target_angle, tolerance=1, max_turn_speed=TURN_SPEED_FAST):
     """Turn the robot to the target angle.
 
     Uses a ramp turn rate function to control the turn acceleration and deceleration.
@@ -79,23 +89,21 @@ def turn(robot: Robot, target_angle, tolerance=1, constant_turn_rate=None):
     :param robot: The robot instance.
     :param target_angle: The target angle to turn on.
     :param tolerance: The target angle tolerance.
-    :param constant_turn_rate: Turn at a constant rate if specified, otherwise use ramp speed.
+    :param max_turn_speed: The maximum turn speed for the ramp function.
     """
     # Determine the delta angle
     heading = robot.hub.imu.heading()
     absolute_delta_angle = abs(target_angle - heading)
 
     # Determine the max turn speed based on the absolute delta angle
-    max_turn_speed = _get_max_turn_speed(absolute_delta_angle)
+    applied_max_turn_speed = (
+        max_turn_speed if max_turn_speed else _get_max_turn_speed(absolute_delta_angle)
+    )
 
     error_angle = _short_turn_angle(robot, target_angle)
 
     while round(error_angle) not in range(-tolerance, tolerance):
-        turn_rate = (
-            constant_turn_rate
-            if constant_turn_rate
-            else _get_ramp_turn(error_angle, max_turn_speed)
-        )
+        turn_rate = _get_ramp_turn(error_angle, applied_max_turn_speed)
         robot.drive_base.drive(0, turn_rate)
         error_angle = _short_turn_angle(robot, target_angle)
     robot.drive_base.stop()
@@ -160,19 +168,19 @@ def _hold(robot):
     robot.right_motor.hold()
 
 
-def _get_top_speed(distance):
+def _get_max_speed(distance):
     return (
-        DRIVE_SPEED_FAST
+        DEFAULT_MAX_SPEED
         if distance >= LARGE_DISTANCE_THRESHOLD
-        else DRIVE_SPEED_ACCURATE
+        else DEFAULT_ACCURATE_SPEED
     )
 
 
 def _get_max_turn_speed(absolute_delta_angle):
     return (
-        TURN_SPEED_FAST
+        DEFAULT_MAX_TURN_SPEED
         if absolute_delta_angle >= LARGE_ANGLE_THRESHOLD
-        else TURN_SPEED_ACCURATE
+        else DEFAULT_ACCURATE_TURN_SPEED
     )
 
 

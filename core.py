@@ -10,16 +10,25 @@ LARGE_DISTANCE_THRESHOLD = 600
 LARGE_ANGLE_THRESHOLD = 60
 
 # The max drive speed to use for large distances.
-DRIVE_SPEED_FAST = 500
+DEFAULT_MAX_SPEED = 500
 
-# The max drive speed to use for smaller distances.
-DRIVE_SPEED_ACCURATE = 300
+# The max drive speed to use for smaller distances giving better accuracy.
+DEFAULT_ACCURATE_SPEED = 300
+
+# The drive speed when we don't care about accuracy
+DRIVE_SPEED_FAST = 600
+
+# A steady drive speed used for small push/pull situations.
+DRIVE_SPEED_STEADY = 200
 
 # The max turn speed to use for larger angles.
-TURN_SPEED_FAST = 340
+DEFAULT_MAX_TURN_SPEED = 340
 
-# The max turn speed to use for smaller angles.
-TURN_SPEED_ACCURATE = 100
+# The max turn speed to use for smaller angles giving better accuracy.
+DEFAULT_ACCURATE_TURN_SPEED = 200
+
+# The turn speed when we don't care about accuracy
+TURN_SPEED_FAST = 600
 
 # The minimum turn speed
 MIN_TURN_SPEED = 10
@@ -28,7 +37,7 @@ MIN_TURN_SPEED = 10
 DEFAULT_WAIT_AFTER_MOVE = 100
 
 # The default time to wait after a button press.
-DEFAULT_WAIT_AFTER_BUTTON_PRESSED = 500
+DEFAULT_WAIT_AFTER_BUTTON_PRESSED = 250
 
 # The default speed for rotating attachments.
 DEFAULT_ATTACHMENT_SPEED = 250
