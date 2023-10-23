@@ -1,5 +1,5 @@
 # Functions for attachments
-from core import Robot, DEFAULT_HOLD_METHOD, DEFAULT_ATTACHMENT_SPEED
+from core import *
 
 
 def rotate_right_attachment_motor(

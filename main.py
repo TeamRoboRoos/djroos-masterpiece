@@ -4,14 +4,8 @@ from pybricks.pupdevices import ColorSensor, Motor, UltrasonicSensor
 from pybricks.robotics import DriveBase
 from pybricks.tools import StopWatch, wait
 
-from core import (
-    DEFAULT_ACCELERATION,
-    DEFAULT_TURN_ACCELERATION,
-    DEFAULT_WAIT_TIME,
-    DEFAULT_DRIVE_SPEED,
-    Robot,
-)
-from missions import run_1, run_1B, run_2, run_3, run_4, run_5, run_6
+from missions import *
+from calibration import *
 
 # Initialise hub
 hub = InventorHub()
@@ -29,15 +23,7 @@ left_sensor = ColorSensor(Port.A)
 right_sensor = ColorSensor(Port.B)
 
 # Initialise drive base
-drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=90)
-# Set the acceleration.
-(
-    straight_speed,
-    straight_acceleration,
-    turn_rate,
-    turn_acceleration,
-) = drive_base.settings()
-drive_base.settings(DEFAULT_DRIVE_SPEED, DEFAULT_ACCELERATION, turn_rate, DEFAULT_TURN_ACCELERATION)
+drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=92)
 
 # Initialise robot
 robot = Robot(
@@ -55,28 +41,27 @@ robot = Robot(
 while not hub.imu.ready():
     print("Waiting for imu to become ready ...")
 
-print("Robot calibrated and ready")
+# Get hub battery percentage.
+current_voltage = robot.hub.battery.voltage()
+battery_percentage = (current_voltage / BATTERY_MAX_VOLTAGE) * 100
+
+print(f"Robot calibrated and ready - {battery_percentage}% charged")
 
 # Menu index
-min_index = 1
-index = 3
+min_index = 0
+index = 1
 max_index = 10
 
 # Prevent centre button from shutting down hub
 hub.system.set_stop_button(None)
 
-print(robot)
-
 # Menu system
 while True:
-    # Prevent left button from shutting down hub.
-    hub.system.set_stop_button(Button.BLUETOOTH)
-
     # Navigate menu index with left and right buttons.
     if Button.RIGHT in hub.buttons.pressed():
-        wait(150)
+        wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
         index += 1
-        hub.speaker.beep(index*100, 100)
+        hub.speaker.beep(index * 100, 100)
         hub.light.on(Color.BLUE)
         if index > max_index:
             index = max_index
@@ -84,9 +69,9 @@ while True:
             hub.speaker.beep(index * 250, 100)
 
     elif Button.LEFT in hub.buttons.pressed():
-        wait(150)
+        wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
         index -= 1
-        hub.speaker.beep(index*100, 100)
+        hub.speaker.beep(index * 100, 100)
         hub.light.on(Color.YELLOW)
         if index < min_index:
             index = min_index
@@ -98,23 +83,23 @@ while True:
 
     # Check if the center button was pressed.
     if Button.CENTER in hub.buttons.pressed():
-        # Set the left button as the stop button during mission runs.
-        hub.system.set_stop_button(Button.LEFT)
+        # During a run, set the bluetooth button as the stop button.
+        hub.system.set_stop_button(Button.BLUETOOTH)
+        wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
+        if index == 0:
+            calibrate(robot)
         if index == 1:
-            wait(DEFAULT_WAIT_TIME)
-            run_1B(robot)
+            run_1(robot)
         elif index == 2:
-            wait(DEFAULT_WAIT_TIME)
             run_2(robot)
         elif index == 3:
-            wait(DEFAULT_WAIT_TIME)
             run_3(robot)
         elif index == 4:
-            wait(DEFAULT_WAIT_TIME)
-            run_4(robot) 
+            run_4(robot)
         elif index == 5:
-            wait(DEFAULT_WAIT_TIME)
             run_5(robot)
         elif index == 6:
-            wait(DEFAULT_WAIT_TIME)
             run_6(robot)
+
+        # Reset the stop button to none.
+        hub.system.set_stop_button(None)

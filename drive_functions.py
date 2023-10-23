@@ -1,292 +1,193 @@
 """Robot driving functions.
 """
 
-from core import DEFAULT_DRIVE_SPEED, DEFAULT_KP_VALUE, DEFAULT_TURN_SPEED, DEFAULT_KP_LOOP_ITERATIONS, Robot
+from core import *
 from pybricks.tools import StopWatch, wait
 
-def drive_straight(robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
-    """Drives straight using the gyro and a kp value.
 
-    :param robot: The robot class.
-    :param speed: The speed to drive at.
-    :param kp: The kp value.
-    """
-    heading = robot.hub.imu.heading()
-    steering = -heading * kp
-    robot.drive_base.drive(speed, steering)
+def move(robot: Robot, distance, heading, constant_speed=None):
+    """Move the robot forward and backwards.
 
-    
-
-
-def move_distance(
-    robot: Robot, distance, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE
-):
-    """Drives the robot a given distance.
+    Uses a ramp speed function to accelerate to top speed then decelerate before stopping.
 
     :param robot: The robot instance.
-    :param distance: The distance to drive.
-    :param speed: The speed to drive at.
-    :param kp: The kp value.
+    :param distance: The distance in mm. Positive is for forwards and negative for backwards.
+    :param heading: The heading to move towards.
+    :param constant_speed: Move at a constant speed if specified, otherwise use ramp speed.
     """
-    # Reset the accumulated drive distance and heading.
-    robot.drive_base.reset()
+    # Determine the top speed based on the distance
+    top_speed = _get_top_speed(distance)
 
-    # Keep driving until distance is reached.
-    while robot.drive_base.distance() < distance:
-        drive_straight(robot, speed, kp)
-
-    # Stop the robot.
-    hold(robot)
-
-
-def move_backwards_distance(
-    robot: Robot, distance, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE
-):
-    """Drives the robot backwards a given distance.
-
-    :param robot: The robot instance.
-    :param distance: The distance to drive.
-    :param speed: The speed to drive at.
-    :param kp: The kp value.
-    """
-    # Reset the accumulated drive distance and heading.
-    robot.drive_base.reset()
-
-    # Negate the distance since we are driving backwards.
-    while -robot.drive_base.distance() < distance:
-        drive_straight(robot, -speed, kp)
-
-    robot.drive_base.stop()
-
-
-def drive_timed(robot: Robot, run_time, speed=DEFAULT_DRIVE_SPEED):
-    run_time_ms = run_time * 1000
-    stopwatch = StopWatch()
-    stopwatch.reset()
-    stopwatch.resume()
-    start_time = stopwatch.time()
-    elapsed = stopwatch.time() - start_time
-    while elapsed < run_time_ms:
-        drive_straight(robot, speed)
-        elapsed = stopwatch.time() - start_time
-    hold(robot)
-
-def move_until_black_line(robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE):
-    """Move until both colour sensors detect a black line.
-
-    :param robot: The robot instance.
-    :param speed: The speed to drive at.
-    :param kp: The kp value.
-    """
-    robot.left_sensor.lights.off()
-    robot.right_sensor.lights.off()
-    robot.drive_base.reset()
-
-    while True:
-        reflection1 = robot.left_sensor.reflection()
-        reflection2 = robot.right_sensor.reflection()
-
-        print(f"Sensor1 - {reflection1}")
-        print(f"Sensor2 - {reflection2}")
-
-        # Check if black line detected
-        white_line_detected = reflection1 > 90 and reflection2 > 90
-        black_line_detected = reflection1 < 16 and reflection2 < 15
-
-        if white_line_detected:
-            break
-        else:
-            drive_straight(robot, speed, kp)
-
-        if black_line_detected:
-            break
-        else:
-            drive_straight(robot, speed, kp)
-
-    hold(robot)
-
-
-def right_sensor_move_until_black_line(
-    robot: Robot, speed=DEFAULT_DRIVE_SPEED, kp=DEFAULT_KP_VALUE
-):
-    """Move until right colour sensor detects a black line
-
-    :param robot: The robot instance.
-    :param speed: The speed to drive at.
-    :param kp: The kp value.
-    """
-    robot.left_sensor.lights.off()
-    robot.right_sensor.lights.off()
-    robot.drive_base.reset()
-
-    while True:
-        reflection = robot.right_sensor.reflection()
-
-        # Check if black line detected
-        black_line_detected = reflection < 15
-
-        if black_line_detected:
-            break
-        else:
-            drive_straight(robot, speed, kp)
-
-    hold(robot)
-
-
-def turn_on_one_wheel(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
-    """Turns the robot on one wheel.
-
-    Turns on right wheel if the angle is greater than 0, otherwise turn on left wheel.
-
-    :param robot: The robot instance.
-    :param angle: The target angle.
-    :param speed: The speed of the turn.
-    """
-    robot.hub.imu.reset_heading(0)
-    right_turn = angle > 0
-
-    if right_turn:
-        while robot.hub.imu.heading() < angle:
-            robot.left_motor.run(speed)
-
-    else:
-        while robot.hub.imu.heading() > angle:
-            robot.right_motor.run(speed)
-
-    hold(robot)
-
-
-def short_turn_angle(robot: Robot, angle):
-    return (angle - robot.hub.imu.heading() +180) % 360 -180
-
-
-def turn_speed(robot: Robot, angle, speed=DEFAULT_TURN_SPEED):
-    """Turns the robot to the given angle.
-    Turns right if the angle is greater than 0, otherwise turns left.
-    :param robot: The robot instance.
-    :param angle: The target angle.
-    :param speed: The speed of the turn.
-    """
-    # Resetting both the angle and the heading variable of the robot
-    right_turn = angle > 0
-
-    # Checks if the robot should turn right or left
-    if right_turn:
-        while robot.hub.imu.heading() < angle:
-            robot.right_motor.run(-speed)
-            robot.left_motor.run(speed)
-    else:
-        while robot.hub.imu.heading() > angle:
-            robot.right_motor.run(speed)
-            robot.left_motor.run(-speed)
-
-    hold(robot)
-
-def turn(robot: Robot, target_angle, speed=DEFAULT_TURN_SPEED):
-    # Perform the turn.
-    turn_speed(robot, target_angle, speed)
-
-    delta = get_delta(robot, target_angle)
-
-    while abs(delta) > 1:
-        # Correct the angle.
-        turn_speed(robot, delta, speed)
-        print(f"Heading after correction - {robot.hub.imu.heading()}")
-        delta = get_delta(robot, target_angle)
-        wait(100)
-
-    wait(250)
-
-
-def get_ramp_turn(angle):
-    return ((120 - 50)/180)*angle + 50 * sign(angle)
-
-
-def turnTo(robot: Robot, angle, tolerance=1):
-    error_angle = short_turn_angle(robot, angle)
-    while round(error_angle) not in range(-tolerance, tolerance):
-        robot.drive_base.drive(0, get_ramp_turn(error_angle))
-        error_angle = short_turn_angle(robot, angle)
-    robot.drive_base.stop()
-
-
-def move(robot: Robot, distance, heading, top_speed=DEFAULT_DRIVE_SPEED):
-    
-    #create new variable to convert distance to absolute value
-    posdistance = abs(distance)
-    section = posdistance / 3
+    # create new variable to convert distance to absolute value
+    absolute_distance = abs(distance)
+    section_distance = absolute_distance / 3
     robot.drive_base.reset()
     # current distance at initial read will be 0 due to drive base reset
     current_distance = robot.drive_base.distance()
-    
+
     # compare current distance with desired distance
     # (note negative distance is already converted to absolute value)
-    while current_distance < posdistance:
-        if current_distance < section:
-            speed = ((top_speed - 20)/section) * current_distance + 20
-        elif current_distance > section and current_distance < section * 2:
-            speed = top_speed
-        else:
-            speed = (-(top_speed - 20)/section) * (current_distance - posdistance) + 20
-        
-        KPfactor = -0.004 * speed + 4.2
-        head = robot.hub.imu.heading() - heading
-        turn = -head * KPfactor
-        
+    while current_distance < absolute_distance:
+        speed = (
+            constant_speed
+            if constant_speed
+            else _get_ramp_speed(
+                top_speed, current_distance, absolute_distance, section_distance
+            )
+        )
+
+        angle = _get_kp_angle(robot.hub.imu.heading(), heading, speed)
+
         # pass original distance value to sign function to return 1 or -1 to
         # multiply with speed value to determine forward(+) or backward(-) drive
-        robot.drive_base.drive(speed*sign(distance),turn)
+        robot.drive_base.drive(speed * _sign(distance), angle)
 
         # read current distance but convert to absolute value to cover for
         # backward drive for comparison with absolute distance value
         current_distance = abs(robot.drive_base.distance())
     robot.drive_base.stop()
+    wait(DEFAULT_WAIT_AFTER_MOVE)
 
 
-def get_delta(robot: Robot, target_angle) -> int:
+def move_timed(robot: Robot, run_time, heading, speed):
+    """Moves the robot forwards or backwards at a constant speed for a given number of milliseconds.
+
+    :param robot: The robot instance.
+    :param run_time: The runtime in milliseconds.
+    :param heading: The heading to move towards.
+    :param speed: The speed to drive at. Positive speed is forwards, negative speed is backwards.
+    """
+    stopwatch = StopWatch()
+    stopwatch.reset()
+    stopwatch.resume()
+    start_time = stopwatch.time()
+    elapsed = stopwatch.time() - start_time
+
+    while elapsed < run_time:
+        angle = _get_kp_angle(robot.hub.imu.heading(), heading, speed)
+        robot.drive_base.drive(speed, angle)
+        elapsed = stopwatch.time() - start_time
+    robot.drive_base.stop()
+    wait(DEFAULT_WAIT_AFTER_MOVE)
+
+
+def turn(robot: Robot, target_angle, tolerance=1, constant_turn_rate=None):
+    """Turn the robot to the target angle.
+
+    Uses a ramp turn rate function to control the turn acceleration and deceleration.
+
+    :param robot: The robot instance.
+    :param target_angle: The target angle to turn on.
+    :param tolerance: The target angle tolerance.
+    :param constant_turn_rate: Turn at a constant rate if specified, otherwise use ramp speed.
+    """
+    # Determine the delta angle
     heading = robot.hub.imu.heading()
+    absolute_delta_angle = abs(target_angle - heading)
 
-    print(f"Heading before correction {heading}")
-    
-    left_turn = target_angle < 0
-    if left_turn:
-        if heading < target_angle:
-            # Overshoot
-            delta = heading - target_angle
+    # Determine the max turn speed based on the absolute delta angle
+    max_turn_speed = _get_max_turn_speed(absolute_delta_angle)
+
+    error_angle = _short_turn_angle(robot, target_angle)
+
+    while round(error_angle) not in range(-tolerance, tolerance):
+        turn_rate = (
+            constant_turn_rate
+            if constant_turn_rate
+            else _get_ramp_turn(error_angle, max_turn_speed)
+        )
+        robot.drive_base.drive(0, turn_rate)
+        error_angle = _short_turn_angle(robot, target_angle)
+    robot.drive_base.stop()
+
+
+def turn_on_one_wheel(robot: Robot, target_angle, tolerance=1, constant_turn_rate=None):
+    """Turns the robot on one wheel.
+
+    :param robot: The robot instance.
+    :param target_angle: The target angle.
+    :param tolerance: The target angle tolerance.
+    :param constant_turn_rate: Turn at a constant rate if specified, otherwise use ramp speed.
+    """
+    # Determine the delta angle
+    heading = robot.hub.imu.heading()
+    absolute_delta_angle = abs(target_angle - heading)
+
+    # Determine the max turn speed based on the absolute delta angle
+    max_turn_speed = _get_max_turn_speed(absolute_delta_angle)
+
+    error_angle = _short_turn_angle(robot, target_angle)
+
+    # Determine left or right turn based on error angle.
+    right_turn = error_angle > 0
+
+    while round(error_angle) not in range(-tolerance, tolerance):
+        turn_rate = (
+            constant_turn_rate
+            if constant_turn_rate
+            else _get_ramp_turn(error_angle, max_turn_speed)
+        )
+        if right_turn:
+            robot.left_motor.run(turn_rate)
         else:
-            # Undershoot
-            delta = target_angle - heading
-    else:
-        if heading < target_angle:
-            # Undershoot
-            delta = target_angle - heading
-        else:
-            # Overshoot
-            delta = heading - target_angle
+            robot.right_motor.run(turn_rate)
+        error_angle = _short_turn_angle(robot, target_angle)
+    _hold(robot)
 
-    print(f"Delta is {delta}")
 
-    return delta
-            
-def sign(num):
+def _short_turn_angle(robot: Robot, angle):
+    return (angle - robot.hub.imu.heading() + 180) % 360 - 180
+
+
+def _get_ramp_turn(angle, max_turn_speed):
+    return ((max_turn_speed - MIN_TURN_SPEED) / 180) * angle + MIN_TURN_SPEED * _sign(
+        angle
+    )
+
+
+def _sign(num):
     return 1 if num >= 0 else -1
 
 
-def set_acceleration(robot: Robot, acceleration):
-    (
-        straight_speed,
-        straight_acceleration,
-        turn_rate,
-        turn_acceleration,
-    ) = robot.drive_base.settings()
-    robot.drive_base.settings(
-        straight_speed, acceleration, turn_rate, turn_acceleration
-    )
-
-def hold(robot):
+def _hold(robot):
     """Stops the robot by holding both motors.
 
     :param robot: The robot instance.
     """
+    # robot.left_motor.brake()
+    # robot.right_motor.brake()
     robot.left_motor.hold()
     robot.right_motor.hold()
+
+
+def _get_top_speed(distance):
+    return (
+        DRIVE_SPEED_FAST
+        if distance >= LARGE_DISTANCE_THRESHOLD
+        else DRIVE_SPEED_ACCURATE
+    )
+
+
+def _get_max_turn_speed(absolute_delta_angle):
+    return (
+        TURN_SPEED_FAST
+        if absolute_delta_angle >= LARGE_ANGLE_THRESHOLD
+        else TURN_SPEED_ACCURATE
+    )
+
+
+def _get_ramp_speed(top_speed, current_distance, total_distance, section_distance):
+    if current_distance < section_distance:
+        return ((top_speed - 20) / section_distance) * current_distance + 20
+    elif section_distance < current_distance < section_distance * 2:
+        return top_speed
+    else:
+        return (-(top_speed - 20) / section_distance) * (
+            current_distance - total_distance
+        ) + 20
+
+
+def _get_kp_angle(current_heading, target_heading, speed):
+    kp_factor = -0.004 * speed + 4.2
+    head = current_heading - target_heading
+    return -head * kp_factor

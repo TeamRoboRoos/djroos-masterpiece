@@ -7,7 +7,7 @@ def countdown(hub, count):
             for i in reversed(range(1, count + 1)):
                 hub.display.char(str(i))
                 wait(1000)
-        elif count > 9 and count < 100:
+        elif 9 < count < 100:
             for i in reversed(range(1, count + 1)):
                 hub.display.number(i)
                 wait(1000)
