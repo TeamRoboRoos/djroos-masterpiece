@@ -46,10 +46,11 @@ current_voltage = robot.hub.battery.voltage()
 battery_percentage = (current_voltage / BATTERY_MAX_VOLTAGE) * 100
 
 print(f"Robot calibrated and ready - {round(battery_percentage, 2)}% charged")
+print(f"left attachment motor angle: {left_attachment_motor.angle()} \nright attachment motor: {right_attachment_motor.angle()}")
 
 # Menu index
 min_index = 0
-index = 1
+index = 4
 max_index = 10
 
 # Prevent centre button from shutting down hub

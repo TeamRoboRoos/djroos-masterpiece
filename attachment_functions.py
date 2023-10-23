@@ -17,7 +17,7 @@ def rotate_right_attachment_motor(
     :param holding_method: The holding method once the target angle has been reached.
     :param wait: Whether to wait until target angle is reached before executing next instruction.
     """
-    robot.right_attachment_motor.run_angle(speed, angle, holding_method, wait=wait)
+    robot.right_attachment_motor.run_angle(speed, angle, then=holding_method, wait=wait)
 
 
 def rotate_left_attachment_motor(
@@ -35,7 +35,7 @@ def rotate_left_attachment_motor(
     :param holding_method: The holding method once the target angle has been reached.
     :param wait: Whether to wait until target angle is reached before executing next instruction.
     """
-    robot.left_attachment_motor.run_angle(speed, angle, holding_method, wait=wait)
+    robot.left_attachment_motor.run_angle(speed, angle, then=holding_method, wait=wait)
 
 
 def rotate_both_attachment_motors(
