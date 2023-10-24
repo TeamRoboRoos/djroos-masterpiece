@@ -7,13 +7,16 @@ from drive_functions import *
 def run_1(robot: Robot):
     """Adapted version of 'run_1' using the jig we use for 'run_2' to make it more efficient and easier"""
     robot.reset_heading()
-    move(robot, 180, 0)
-    turn(robot, -44)
-    move(robot, 250, -44, constant_speed=DRIVE_SPEED_STEADY)
+    move(robot, 160, 0)
+    turn(robot, -47)
+    wait(250)
+    move(robot, 230, -47, constant_speed=200)
     rotate_left_attachment_motor(robot, 130, wait=True)
     wait(250)
-    move(robot, 30, -44, constant_speed=DRIVE_SPEED_STEADY, wait_after_move=False)
-    move(robot, -200, -44, constant_speed=DRIVE_SPEED_STEADY, wait_after_move=False)
+    move(robot, 30, -47, constant_speed=150, wait_after_move=False)
+    # raise KeyboardInterrupt
+    turn(robot, -43)
+    move(robot, -200, -47, constant_speed=150, wait_after_move=False)
     turn(robot, -67, max_turn_speed=TURN_SPEED_FAST)
     move(robot, -300, -67, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
 
@@ -21,28 +24,29 @@ def run_1(robot: Robot):
 def run_2(robot: Robot):
     """Mission 6 and 7"""
     robot.reset_heading()
-    move(robot, 720, 0)
-    turn(robot, 42)
-    move(robot, 50, 42, constant_speed=DRIVE_SPEED_STEADY)
-    move(robot, -90, 42, constant_speed=DRIVE_SPEED_STEADY, wait_after_move=False)
+    move(robot, 720, 0, max_speed=400)
+    turn(robot, 37)
+    move(robot, 50, 37, constant_speed=DRIVE_SPEED_STEADY)
+    move(robot, -90, 37, constant_speed=DRIVE_SPEED_STEADY, wait_after_move=False)
     turn(robot, 0, max_turn_speed=TURN_SPEED_FAST)
-    move(robot, -650, 0, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
+    move(robot, -550, 0, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
 
 
 def run_3(robot: Robot):
     """Mission 8 and rolling camara mission"""
     robot.reset_heading()
-    move(robot, 455, 0)
-    rotate_left_attachment_motor(robot, 140, wait=True)
-    wait(500)
+    move(robot, 460, 0)
+    rotate_left_attachment_motor(robot, 150, wait=True)
+    # wait(500)
     turn(robot, 12)
-    move(robot, 390, 12)
-    rotate_left_attachment_motor(robot, -120)
+    move(robot, 390, 10, constant_speed=400)
+    # wait(500)
+    rotate_left_attachment_motor(robot, -150)
+    turn(robot, 16)
     rotate_right_attachment_motor(robot, -120, 1000)
     wait(500)
-    turn(robot, 12)
-    move(robot, 600, 12, constant_speed=400, wait_after_move=False)
-    turn(robot, -20, max_turn_speed=800)
+    move(robot, 400, 12, constant_speed=400, wait_after_move=False)
+    turn(robot, -30, max_turn_speed=800)
     move(robot, 400, -20, constant_speed=400, wait_after_move=False)
     rotate_right_attachment_motor(robot, 120, 1000)
 
