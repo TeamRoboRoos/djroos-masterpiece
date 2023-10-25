@@ -10,32 +10,34 @@ def run_1(robot: Robot):
     move(robot, 160, 0)
     turn(robot, -47)
     wait(250)
-    move(robot, 230, -47, constant_speed=200)
+    move(robot, 255, -47, constant_speed=200)
     rotate_left_attachment_motor(robot, 130, wait=True)
     wait(250)
-    move(robot, 30, -47, constant_speed=150, wait_after_move=False)
-    # raise KeyboardInterrupt
+    move(robot, 65, -47, constant_speed=150, wait_after_move=False)
+    # raise KeybardInterrupt
     turn(robot, -43)
     move(robot, -200, -47, constant_speed=150, wait_after_move=False)
     turn(robot, -67, max_turn_speed=TURN_SPEED_FAST)
     move(robot, -300, -67, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
+    rotate_left_attachment_motor(robot, -130)
 
 
 def run_2(robot: Robot):
     """Mission 6 and 7"""
     robot.reset_heading()
-    move(robot, 720, 0, max_speed=400)
-    turn(robot, 37)
+    move(robot, 800, 0, max_speed=400)
+    turn(robot, 32)
     move(robot, 50, 37, constant_speed=DRIVE_SPEED_STEADY)
     move(robot, -90, 37, constant_speed=DRIVE_SPEED_STEADY, wait_after_move=False)
     turn(robot, 0, max_turn_speed=TURN_SPEED_FAST)
-    move(robot, -550, 0, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
-
+    move(robot, -350, 0, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
+    turn(robot, -8)
+    move(robot, 350)
 
 def run_3(robot: Robot):
     """Mission 8 and rolling camara mission"""
     robot.reset_heading()
-    move(robot, 460, 0)
+    move(robot, 485, 0)
     rotate_left_attachment_motor(robot, 150, wait=True)
     # wait(500)
     turn(robot, 12)
