@@ -5,6 +5,7 @@ from pybricks.robotics import DriveBase
 from pybricks.tools import StopWatch, wait
 
 from missions import *
+# from missions_dj_roos import *
 from calibration import *
 
 # Initialise hub
@@ -50,8 +51,8 @@ print(f"left attachment motor angle: {left_attachment_motor.angle()} \nright att
 
 # Menu index
 min_index = 1
-index = 6
-max_index = 6
+index = 1
+max_index = 7
 
 index_greater = False
 
@@ -72,7 +73,6 @@ while True:
         if index > max_index:
             index = max_index
             hub.light.on(Color.RED)
-            hub.speaker.beep(index * 250, 100)
 
     elif Button.LEFT in hub.buttons.pressed():
         wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
@@ -84,7 +84,6 @@ while True:
             hub.light.on(Color.RED)
             hub.speaker.beep(250, 100)
 
-        hub.speaker.beep(700, 100)
     hub.display.number(index)
 
     # Check if the center button was pressed.
@@ -106,6 +105,8 @@ while True:
             run_5(robot)
         elif index == 6:
             run_6(robot)
+        elif index == 7:
+            run_6B(robot)
 
         # Adding to the index after every mission
         if index < max_index + 1:

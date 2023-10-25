@@ -46,7 +46,7 @@ DEFAULT_WAIT_AFTER_BUTTON_PRESSED = 250
 DEFAULT_ATTACHMENT_SPEED = 250
 
 # The default hold method for attachments.
-DEFAULT_HOLD_METHOD = Stop.BRAKE
+DEFAULT_HOLD_METHOD = Stop.COAST
 
 # The Inventor Hub max voltage to determine battery capacity.
 BATTERY_MAX_VOLTAGE = 8429
