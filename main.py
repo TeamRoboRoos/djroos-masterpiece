@@ -49,15 +49,20 @@ print(f"Robot calibrated and ready - {round(battery_percentage, 2)}% charged")
 print(f"left attachment motor angle: {left_attachment_motor.angle()} \nright attachment motor: {right_attachment_motor.angle()}")
 
 # Menu index
-min_index = 0
-index = 4
-max_index = 10
+min_index = 1
+index = 6
+max_index = 6
+
+index_greater = False
 
 # Prevent centre button from shutting down hub
 hub.system.set_stop_button(None)
 
 # Menu system
 while True:
+    # Set bluetooth button as stop button.
+    hub.system.set_stop_button(Button.BLUETOOTH)
+    
     # Navigate menu index with left and right buttons.
     if Button.RIGHT in hub.buttons.pressed():
         wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
@@ -101,6 +106,12 @@ while True:
             run_5(robot)
         elif index == 6:
             run_6(robot)
+
+        # Adding to the index after every mission
+        if index < max_index + 1:
+            index = index + 1
+        else:
+            index = max_index
 
         # Reset the stop button to none.
         hub.system.set_stop_button(None)
