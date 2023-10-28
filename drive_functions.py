@@ -24,19 +24,27 @@ def move(
     :param max_speed: The maximum speed for the ramp function.
     :param wait_after_move: Whether to wait for a bit after the move.
     """
-    # Determine the top speed based on the distance
+    # Determine the top speed based on the distance. Use a lower top speed for
+    # shorter distances which gives better accuracy. Longer distances can use
+    # higher max speed since we have more time to slow down.
     applied_max_speed = max_speed if max_speed else _get_max_speed(distance)
 
-    # create new variable to convert distance to absolute value
+    # Convert distance to absolute value for forwards and backwards movement.
     absolute_distance = abs(distance)
+    # Split of the distance into 3 sections. First section will accelerate to
+    # the max speed, second section will drive at the max speed, third section
+    # will decellerate to stop.
     section_distance = absolute_distance / 3
+    # Rest the drive base distance.
     robot.drive_base.reset()
-    # current distance at initial read will be 0 due to drive base reset
+    # Current distance at initial read will be 0 due to drive base reset.
     current_distance = robot.drive_base.distance()
 
-    # compare current distance with desired distance
-    # (note negative distance is already converted to absolute value)
+    # Compare current distance with desired distance.
+    # Note: negative distance is already converted to absolute value.
     while current_distance < absolute_distance:
+        # Get the speed. If a constant speed is specified use that otherwise
+        # use the ramp speed.
         speed = (
             constant_speed
             if constant_speed
@@ -45,16 +53,21 @@ def move(
             )
         )
 
+        # Get the current driving heading using a K factor to correct heading
+        # based on the gyro to ensure we drive straight.
         angle = _get_kp_angle(robot.hub.imu.heading(), heading, speed)
 
-        # pass original distance value to sign function to return 1 or -1 to
-        # multiply with speed value to determine forward(+) or backward(-) drive
+        # Pass original distance value to sign function to return 1 or -1 to
+        # multiply with speed value. This will determine forward(+) or
+        # backwards(-) driving.
         robot.drive_base.drive(speed * _sign(distance), angle)
 
-        # read current distance but convert to absolute value to cover for
-        # backward drive for comparison with absolute distance value
+        # Read current distance but convert to absolute value to cater for
+        # backwards driving.
         current_distance = abs(robot.drive_base.distance())
     robot.drive_base.stop()
+
+    # Wait a bit after a move by default for better accuracy.
     if wait_after_move:
         wait(DEFAULT_WAIT_AFTER_MOVE)
 
@@ -81,17 +94,23 @@ def move_timed(robot: Robot, run_time, heading, speed):
     wait(DEFAULT_WAIT_AFTER_MOVE)
 
 
-def turn(robot: Robot, target_angle, tolerance=1, max_turn_speed=TURN_SPEED_FAST):
-    """Turn the robot to the target angle.
-
-    Uses a ramp turn rate function to control the turn acceleration and deceleration.
-
+def turn_timed(robot: Robot, run_time, target_angle, tolerance=1, max_turn_speed=TURN_SPEED_FAST):
+    """Turns the robot left or right for spesific amount of miliseconds.
+    
     :param robot: The robot instance.
+    :param run_time: The runtime in milliseconds.
     :param target_angle: The target angle to turn on.
-    :param tolerance: The target angle tolerance.
     :param max_turn_speed: The maximum turn speed for the ramp function.
+    :param tolerance: The target angle tolerance.
+
     """
-    # Determine the delta angle
+
+    stopwatch = StopWatch()
+    stopwatch.reset()
+    stopwatch.resume()
+    start_time = stopwatch.time()
+    elapsed = stopwatch.time() - start_time
+
     heading = robot.hub.imu.heading()
     absolute_delta_angle = abs(target_angle - heading)
 
@@ -102,9 +121,47 @@ def turn(robot: Robot, target_angle, tolerance=1, max_turn_speed=TURN_SPEED_FAST
 
     error_angle = _short_turn_angle(robot, target_angle)
 
-    while round(error_angle) not in range(-tolerance, tolerance):
+    while round(error_angle) not in range(-tolerance, tolerance) and elapsed < run_time:
         turn_rate = _get_ramp_turn(error_angle, applied_max_turn_speed)
         robot.drive_base.drive(0, turn_rate)
+        error_angle = _short_turn_angle(robot, target_angle)
+        elapsed = stopwatch.time() - start_time
+    
+    robot.drive_base.stop()
+
+
+def turn(robot: Robot, target_angle, tolerance=1, max_turn_speed=TURN_SPEED_FAST):
+    """Turn the robot to the target angle.
+
+    Uses a ramp turn rate function to control the turn acceleration and deceleration.
+
+    :param robot: The robot instance.
+    :param target_angle: The target angle to turn on.
+    :param tolerance: The target angle tolerance.
+    :param max_turn_speed: The maximum turn speed for the ramp function.
+    """
+    # Get the current heading.
+    heading = robot.hub.imu.heading()
+    # Get the absolute angle the robot needs to turn, whether it is a left (-ve)
+    # or right (+ve) turn.
+    absolute_delta_angle = abs(target_angle - heading)
+
+    # Determine the max turn speed based on the absolute angle. Small angles
+    # use a lower turn speed for accuracy.
+    applied_max_turn_speed = (
+        max_turn_speed if max_turn_speed else _get_max_turn_speed(absolute_delta_angle)
+    )
+
+    # Determine the shortest angle to turn to in order to get to the target
+    # angle. Error angle is how much left we need to turn.
+    error_angle = _short_turn_angle(robot, target_angle)
+
+    while round(error_angle) not in range(-tolerance, tolerance):
+        # Get the turn turn speed based on how far the robot has turned.
+        turn_rate = _get_ramp_turn(error_angle, applied_max_turn_speed)
+        # Perform the turn.
+        robot.drive_base.drive(0, turn_rate)
+        # Get the error angle again after the turn.
         error_angle = _short_turn_angle(robot, target_angle)
     robot.drive_base.stop()
 

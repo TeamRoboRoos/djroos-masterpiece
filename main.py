@@ -49,47 +49,57 @@ battery_percentage = (current_voltage / BATTERY_MAX_VOLTAGE) * 100
 print(f"Robot calibrated and ready - {round(battery_percentage, 2)}% charged")
 print(f"left attachment motor angle: {left_attachment_motor.angle()} \nright attachment motor: {right_attachment_motor.angle()}")
 
-# Menu index
+# The max and min menu item index.
 min_index = 1
-index = 1
 max_index = 7
+# The starting menu index.
+index = 1
 
 index_greater = False
 
 # Prevent centre button from shutting down hub
-hub.system.set_stop_button(None)
+hub.system.set_stop_button(Button.BLUETOOTH)
 
 # Menu system
 while True:
-    # Set bluetooth button as stop button.
-    hub.system.set_stop_button(Button.BLUETOOTH)
-    
     # Navigate menu index with left and right buttons.
     if Button.RIGHT in hub.buttons.pressed():
+        # Wait so one button press won't register as multiple button presses.
         wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
+        # Increment for right button press.
         index += 1
+        # Beep at a higher frequency for higher index.
         hub.speaker.beep(index * 100, 100)
+        # Show a blue light when incrementing index.
         hub.light.on(Color.BLUE)
+        # Don't increment past max index.
         if index > max_index:
             index = max_index
+            # Show a red light if we reach the end of the menu.
             hub.light.on(Color.RED)
 
     elif Button.LEFT in hub.buttons.pressed():
+        # Wait so one button press won't register as multiple button presses.
         wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
+        # Decrement for left button press.
         index -= 1
+        # Beep at a higher frequency for higher index.
         hub.speaker.beep(index * 100, 100)
+        # Show a yellow light when decrementing index.
         hub.light.on(Color.YELLOW)
+        # Don't decrement below the minimum index.
         if index < min_index:
             index = min_index
+            # Show a red light if we reach the beginning of the menu.
             hub.light.on(Color.RED)
-            hub.speaker.beep(250, 100)
 
+    # Display the menu index on the hub.
     hub.display.number(index)
 
     # Check if the center button was pressed.
     if Button.CENTER in hub.buttons.pressed():
-        # During a run, set the bluetooth button as the stop button.
-        hub.system.set_stop_button(Button.BLUETOOTH)
+        # Wait a bit after pressing the start button to allow the person to 
+        # remove their finger.
         wait(DEFAULT_WAIT_AFTER_BUTTON_PRESSED)
         if index == 0:
             calibrate(robot)
@@ -108,11 +118,8 @@ while True:
         elif index == 7:
             run_6B(robot)
 
-        # Adding to the index after every mission
+        # Increment the index after every mission to save time.
         if index < max_index + 1:
             index = index + 1
         else:
             index = max_index
-
-        # Reset the stop button to none.
-        hub.system.set_stop_button(None)

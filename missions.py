@@ -34,9 +34,8 @@ def run_2(robot: Robot):
     move(robot, -90, 37, constant_speed=DRIVE_SPEED_STEADY, wait_after_move=False)
     turn(robot, 0, max_turn_speed=TURN_SPEED_FAST)
     move(robot, -200, 0, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
-    turn(robot, -60)
-    move(robot, -450, -60)
-    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, 0)
+    move(robot, -450, -60, constant_speed=DRIVE_SPEED_FAST)
+    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, 0, then=Stop.COAST)
 
 
 def run_3(robot: Robot):
@@ -64,12 +63,13 @@ def run_4(robot: Robot):
     move(robot, 350, 0)
     turn(robot, -10)
     move(robot, 15, -10)
-    turn(robot, 22, max_turn_speed=1000)
+    turn_timed(robot, 700, 22, max_turn_speed=1000)
+    # turn(robot, 22, max_turn_speed=1000)
     wait(250)
     move(robot, -300, 22)
     # turn(robot, -20, max_turn_speed=1000)
     # move(robot, -170, -20, constant_speed=DRIVE_SPEED_FAST)
-    robot.left_attachment_motor.run_target(500, -7, then=Stop.COAST)
+    robot.left_attachment_motor.run_target(500, 7, then=Stop.COAST)
 
 
 def run_5(robot: Robot):
@@ -95,7 +95,7 @@ def run_6(robot: Robot, hit_twice = True):
     rotate_right_attachment_motor(robot, 200, speed=100)
     wait(750)
     rotate_right_attachment_motor(robot, -200, speed=100)
-    move(robot, 180, -105, constant_speed=100)
+    move(robot, 190, -105, constant_speed=100)
     move(robot, -70, -105, constant_speed=100)
 
     if hit_twice:
