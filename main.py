@@ -51,9 +51,9 @@ print(f"left attachment motor angle: {left_attachment_motor.angle()} \nright att
 
 # The max and min menu item index.
 min_index = 1
-max_index = 7
+max_index = 8
 # The starting menu index.
-index = 1
+index = 8   
 
 index_greater = False
 
@@ -117,6 +117,8 @@ while True:
             run_6(robot)
         elif index == 7:
             run_6B(robot)
+        elif index == 8:
+            run_7(robot)
 
         # Increment the index after every mission to save time.
         if index < max_index + 1:
