@@ -6,8 +6,6 @@ from drive_functions import *
 def run_1(robot: Robot):
     """Adapted version of 'run_1' using the jig we use for 'run_2' to make it more efficient and easier"""
     robot.reset_heading()
-    robot.left_attachment_motor.reset_angle(0)
-    robot.right_attachment_motor.reset_angle(0)
     move(robot, 170, 0)
     turn(robot, -47)
     move(robot, 150, -47, constant_speed=200)
@@ -18,6 +16,8 @@ def run_1(robot: Robot):
     move(robot, -200, -42, constant_speed=150, wait_after_move=False)
     turn(robot, -60, max_turn_speed=TURN_SPEED_FAST)
     move(robot, -400, -60, constant_speed=DRIVE_SPEED_FAST, wait_after_move=False)
+    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, 0, then=Stop.COAST, wait=False)
+    robot.right_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, 0, then=Stop.COAST, wait=False)
 
 
 def run_2(robot: Robot):
@@ -41,17 +41,17 @@ def run_3(robot: Robot):
     # wait(500)
     # turn(robot, 12)
     move(robot, 100, 8, constant_speed=100)
-    move(robot, 290, 8, constant_speed=400)
+    move(robot, 290, 8, constant_speed=250)
     # wait(500)
     rotate_left_attachment_motor(robot, -155)
-    turn(robot, 16)
+    turn(robot, 30)
     rotate_right_attachment_motor(robot, -120, 1000)
-    wait(500)
-    move(robot, 400, 12, constant_speed=400, wait_after_move=False)
-    turn(robot, -30, max_turn_speed=800)
-    move(robot, 400, -20, constant_speed=400, wait_after_move=False)
+    # wait(500)
+    move(robot, 310, 30)
+    turn(robot, -20, max_turn_speed=800)
+    move(robot, 490, -20, constant_speed=400, wait_after_move=False)
     rotate_right_attachment_motor(robot, 120, 1000)
-    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, 17,then=Stop.COAST)
+    # robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, 40, then=Stop.COAST, wait=False)
 
 
 def run_4(robot: Robot):
@@ -65,8 +65,8 @@ def run_4(robot: Robot):
     move(robot, -300, 22)
     # turn(robot, -20, max_turn_speed=1000)
     # move(robot, -170, -20, constant_speed=DRIVE_SPEED_FAST)
-    robot.left_attachment_motor.run_target(500, 7, then=Stop.COAST)
-
+    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, -42, then=Stop.COAST, wait=False)
+    
 
 def run_5(robot: Robot):
     robot.reset_heading()
@@ -78,11 +78,11 @@ def run_5(robot: Robot):
     robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, 32, then=Stop.COAST)
 
 
-def run_6(robot: Robot, hit_twice = True):
+def run_6(robot: Robot, hit_twice=True):
     robot.reset_heading()
     move(robot, 100, 0)
     move(robot, 450, 30)
-    move(robot, 490, -13)
+    move(robot, 485, -13)
     rotate_left_attachment_motor(robot, -200, wait=False)
     turn(robot, -20)
     move(robot, -100, -22)
@@ -95,9 +95,11 @@ def run_6(robot: Robot, hit_twice = True):
     move(robot, -70, -105, constant_speed=100)
 
     if hit_twice:
-        wait(1000)
+        wait(200)
         move(robot, 70, -105, constant_speed=100)
         move(robot, -70, -105, 100)
+
+    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, -34, then=Stop.COAST, wait=False)
 
 def run_6B(robot: Robot):
     run_6(robot, False)
@@ -106,9 +108,23 @@ def run_7(robot: Robot):
     robot.reset_heading()
     move(robot, 100, 0)
     move(robot, 450, 30)
-    move(robot, 670, -2)
-    turn(robot, 65)
-    move(robot, 100, 65)
-    turn_timed(robot, 800, 33)
-    turn(robot, 63)
+    move(robot, 670, 2)
+    turn(robot, 58)
+    move(robot, 30, 58)
+    turn_timed(robot, 800, 28)
+    turn(robot, 58)
+    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, -6, then=Stop.COAST, wait=False)
+    move(robot, 120, 58)
+    # turn_timed(robot, 800, 20)
+    move(robot, 300, 38)
+    # turn(robot, 23)
+    # move(robot, 60, 23)
+    robot.left_attachment_motor.run_time(-1000, 1000, then=Stop.COAST, wait=True)
+    turn(robot, 28)
+    robot.left_attachment_motor.run_time(1000, 1000, then=Stop.COAST, wait=True)
+    robot.left_attachment_motor.run_time(-1000, 1000, then=Stop.COAST)
+    # # rotate_left_attachment_motor(robot, -200, wait=True)
+    move(robot, 40, 25)
+    robot.left_attachment_motor.run_target(DEFAULT_ATTACHMENT_SPEED, -34, then=Stop.COAST, wait=False)
+
 
